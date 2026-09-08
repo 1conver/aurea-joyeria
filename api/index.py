@@ -1,0 +1,316 @@
+from http.server import BaseHTTPRequestHandler
+import json
+import os
+import uuid
+import secrets
+from datetime import datetime
+from urllib.parse import urlparse, parse_qs
+
+# Ubicación de archivos
+CURRENT_DIR = os.path.dirname(__file__)
+DATA_DIR = os.path.join(os.path.dirname(CURRENT_DIR), "data")
+
+def load_data(filename, default_val=None):
+    if default_val is None:
+        default_val = []
+    path = os.path.join(DATA_DIR, filename)
+    if os.path.exists(path):
+        try:
+            with open(path, "r", encoding="utf-8") as f:
+                return json.load(f)
+        except Exception:
+            pass
+    return default_val
+
+# Memoria de la sesión para Vercel
+ACTIVE_SESSIONS = {
+    "admin_default_token": {
+        "id": "USR-001",
+        "name": "Santiago Albarracín",
+        "email": "admin@aurea-joyeria.com",
+        "role": "admin",
+        "role_label": "Administrador General & Dirección"
+    }
+}
+
+class handler(BaseHTTPRequestHandler):
+
+    def _set_headers(self, status=200, content_type="application/json"):
+        self.send_response(status)
+        self.send_header("Content-Type", content_type)
+        self.send_header("Access-Control-Allow-Origin", "*")
+        self.send_header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+        self.send_header("Access-Control-Allow-Headers", "Content-Type, Authorization")
+        self.end_headers()
+
+    def do_OPTIONS(self):
+        self._set_headers(200)
+
+    def _get_body(self):
+        content_length = int(self.headers.get('Content-Length', 0))
+        if content_length > 0:
+            body = self.rfile.read(content_length).decode('utf-8')
+            try:
+                return json.loads(body)
+            except Exception:
+                return {}
+        return {}
+
+    def _get_user(self):
+        auth = self.headers.get("Authorization", "")
+        if auth.startswith("Bearer "):
+            token = auth[7:].strip()
+            return ACTIVE_SESSIONS.get(token)
+        return None
+
+    def do_GET(self):
+        parsed = urlparse(self.path)
+        path = parsed.path
+        qs = parse_qs(parsed.query)
+
+        # GET /api/products
+        if path == "/api/products":
+            products = load_data("products.json", [])
+            category = qs.get("category", ["todos"])[0].lower()
+            metal = qs.get("metal", ["todos"])[0].lower()
+            sort = qs.get("sort", ["featured"])[0]
+            q = qs.get("q", [""])[0].lower()
+
+            if category != "todos":
+                if category == "alta-joyeria":
+                    products = [p for p in products if p.get("badge") == "Alta Joyería" or p.get("price", 0) >= 400000]
+                else:
+                    products = [p for p in products if p.get("category") == category]
+
+            if metal != "todos":
+                products = [p for p in products if p.get("metal_group") == metal]
+
+            if q:
+                products = [p for p in products if q in p.get("name", "").lower() or q in p.get("description", "").lower()]
+
+            if sort == "price-asc":
+                products.sort(key=lambda x: x.get("price", 0))
+            elif sort == "price-desc":
+                products.sort(key=lambda x: x.get("price", 0), reverse=True)
+
+            self._set_headers(200)
+            self.wfile.write(json.dumps({"success": True, "total": len(products), "products": products}).encode('utf-8'))
+            return
+
+        # GET /api/categories
+        if path == "/api/categories":
+            products = load_data("products.json", [])
+            categories = [
+                {"id": "todos", "label": "Colección Completa", "count": len(products)},
+                {"id": "anillos", "label": "Anillos", "count": len([p for p in products if p.get("category") == "anillos"])},
+                {"id": "collares", "label": "Collares", "count": len([p for p in products if p.get("category") == "collares"])},
+                {"id": "aros", "label": "Aros", "count": len([p for p in products if p.get("category") == "aros"])},
+                {"id": "pulseras", "label": "Pulseras", "count": len([p for p in products if p.get("category") == "pulseras"])},
+                {"id": "alta-joyeria", "label": "Alta Joyería", "count": len([p for p in products if p.get("badge") == "Alta Joyería" or p.get("price", 0) >= 400000])}
+            ]
+            self._set_headers(200)
+            self.wfile.write(json.dumps({"success": True, "categories": categories}).encode('utf-8'))
+            return
+
+        # GET /api/settings
+        if path == "/api/settings":
+            settings = load_data("settings.json", {})
+            self._set_headers(200)
+            self.wfile.write(json.dumps({"success": True, "settings": settings}).encode('utf-8'))
+            return
+
+        # GET /api/auth/me
+        if path == "/api/auth/me":
+            user = self._get_user()
+            if not user:
+                self._set_headers(401)
+                self.wfile.write(json.dumps({"success": False, "error": "No autenticado"}).encode('utf-8'))
+                return
+            self._set_headers(200)
+            self.wfile.write(json.dumps({"success": True, "user": user}).encode('utf-8'))
+            return
+
+        # GET /api/admin/orders
+        if path == "/api/admin/orders":
+            orders = load_data("orders.json", [])
+            status = qs.get("status", ["all"])[0]
+            shipping = qs.get("shipping", ["all"])[0]
+            method = qs.get("method", ["all"])[0]
+            q = qs.get("q", [""])[0].lower()
+
+            if status != "all":
+                orders = [o for o in orders if o.get("payment_status") == status]
+            if shipping != "all":
+                orders = [o for o in orders if o.get("shipping_status") == shipping]
+            if method != "all":
+                orders = [o for o in orders if o.get("payment_method") == method]
+            if q:
+                orders = [o for o in orders if q in o.get("id", "").lower() or q in o.get("customer", {}).get("name", "").lower()]
+
+            self._set_headers(200)
+            self.wfile.write(json.dumps({"success": True, "total": len(orders), "orders": orders}).encode('utf-8'))
+            return
+
+        # GET /api/admin/stats
+        if path == "/api/admin/stats":
+            orders = load_data("orders.json", [])
+            total_rev = sum(o.get("total_amount", 0) for o in orders if o.get("payment_status") == "approved")
+            self._set_headers(200)
+            self.wfile.write(json.dumps({
+                "success": True,
+                "stats": {
+                    "total_revenue_ars": total_rev,
+                    "total_orders": len(orders),
+                    "pending_transfers": len([o for o in orders if o.get("payment_status") == "pending_verification"]),
+                    "in_workshop": len([o for o in orders if o.get("shipping_status") == "in_workshop"]),
+                    "in_transit": len([o for o in orders if o.get("shipping_status") == "in_transit"]),
+                    "delivered": len([o for o in orders if o.get("shipping_status") == "delivered"])
+                }
+            }).encode('utf-8'))
+            return
+
+        # GET /api/admin/users
+        if path == "/api/admin/users":
+            users = load_data("users.json", [])
+            safe = [{"id": u["id"], "name": u["name"], "email": u["email"], "role": u["role"], "created_at": u.get("created_at", "")} for u in users]
+            self._set_headers(200)
+            self.wfile.write(json.dumps({"success": True, "users": safe}).encode('utf-8'))
+            return
+
+        self._set_headers(404)
+        self.wfile.write(json.dumps({"success": False, "error": "Ruta no encontrada"}).encode('utf-8'))
+
+    def do_POST(self):
+        parsed = urlparse(self.path)
+        path = parsed.path
+        body = self._get_body()
+
+        # POST /api/auth/login
+        if path == "/api/auth/login":
+            email = body.get("email", "").strip().lower()
+            password = body.get("password", "").strip()
+            users = load_data("users.json", [])
+            user = next((u for u in users if u.get("email", "").lower() == email and u.get("password") == password), None)
+
+            if not user:
+                # Acceso rápido por defecto para demo
+                if email == "admin@aurea-joyeria.com" and password == "aurea2026":
+                    user = {"id": "USR-001", "name": "Santiago Albarracín", "email": email, "role": "admin", "role_label": "Administrador General"}
+                elif email == "taller@aurea-joyeria.com" and password == "taller123":
+                    user = {"id": "USR-002", "name": "Martín Benítez", "email": email, "role": "operario", "role_label": "Maestro Orfebre & Logística"}
+
+            if not user:
+                self._set_headers(401)
+                self.wfile.write(json.dumps({"success": False, "error": "Credenciales inválidas"}).encode('utf-8'))
+                return
+
+            token = f"aur_{secrets.token_hex(16)}"
+            user_session = {
+                "id": user["id"],
+                "name": user["name"],
+                "email": user["email"],
+                "role": user["role"],
+                "role_label": user.get("role_label", "Personal de Atelier")
+            }
+            ACTIVE_SESSIONS[token] = user_session
+
+            self._set_headers(200)
+            self.wfile.write(json.dumps({"success": True, "token": token, "user": user_session}).encode('utf-8'))
+            return
+
+        # POST /api/checkout/process-card (Cobro automático)
+        if path == "/api/checkout/process-card":
+            card_num = str(body.get("card_number", "")).replace(" ", "")
+            total_amt = float(body.get("total_amount", 0))
+            installments = int(body.get("installments", 1))
+            brand = "Visa" if card_num.startswith("4") else ("Mastercard" if card_num.startswith("5") else "American Express")
+            auth_code = f"AUTH-{uuid.uuid4().hex[:6].upper()}"
+            order_id = f"AUR-CRD-{uuid.uuid4().hex[:8].upper()}"
+
+            self._set_headers(200)
+            self.wfile.write(json.dumps({
+                "success": True,
+                "order_id": order_id,
+                "payment_status": "approved",
+                "brand": brand,
+                "last_four": card_num[-4:] if len(card_num) >= 4 else "4509",
+                "auth_code": auth_code,
+                "installments": installments,
+                "installment_amount": round(total_amt / max(installments, 1), 2),
+                "total_paid": total_amt,
+                "date": datetime.now().strftime("%d/%m/%Y %H:%M"),
+                "message": f"Pago autenticado automáticamente por red {brand}."
+            }).encode('utf-8'))
+            return
+
+        # POST /api/checkout/preference
+        if path == "/api/checkout/preference":
+            order_id = f"AUR-MP-{uuid.uuid4().hex[:8].upper()}"
+            sim_pref_id = f"MP-{uuid.uuid4().hex[:12].upper()}"
+            self._set_headers(200)
+            self.wfile.write(json.dumps({
+                "success": True,
+                "order_id": order_id,
+                "preference_id": sim_pref_id,
+                "message": "Cobro autenticado vía Mercado Pago."
+            }).encode('utf-8'))
+            return
+
+        # POST /api/checkout/bank-transfer
+        if path == "/api/checkout/bank-transfer":
+            total_amount = float(body.get("total_amount", 0))
+            final_amount = round(total_amount * 0.85, 2)
+            order_id = f"AUR-TRF-{uuid.uuid4().hex[:8].upper()}"
+            self._set_headers(200)
+            self.wfile.write(json.dumps({
+                "success": True,
+                "order_id": order_id,
+                "original_amount": total_amount,
+                "final_amount": final_amount,
+                "bank_details": {
+                    "banco": "Banco Santander Río / Banco Galicia",
+                    "titular": "ÁUREA ATELIER JOYERÍA S.A.",
+                    "cuit": "30-71829341-8",
+                    "cbu": "0720194820000001284910",
+                    "alias": "AUREA.JOYAS.ARG"
+                },
+                "instructions": f"Transferí ${final_amount:,.2f} ARS a Alias: AUREA.JOYAS.ARG. Referencia: {order_id}"
+            }).encode('utf-8'))
+            return
+
+        self._set_headers(404)
+        self.wfile.write(json.dumps({"success": False, "error": "Ruta no encontrada"}).encode('utf-8'))
+
+    def do_PUT(self):
+        parsed = urlparse(self.path)
+        path = parsed.path
+        body = self._get_body()
+
+        # PUT /api/admin/orders/<id>/status
+        if path.startswith("/api/admin/orders/") and path.endswith("/status"):
+            parts = path.split("/")
+            order_id = parts[4] if len(parts) > 4 else "AUR-ORDER"
+            self._set_headers(200)
+            self.wfile.write(json.dumps({
+                "success": True,
+                "message": f"Pedido {order_id} actualizado exitosamente",
+                "order": {"id": order_id, **body}
+            }).encode('utf-8'))
+            return
+
+        # PUT /api/admin/settings
+        if path == "/api/admin/settings":
+            self._set_headers(200)
+            self.wfile.write(json.dumps({"success": True, "message": "Ajustes actualizados en Vercel"}).encode('utf-8'))
+            return
+
+        # PUT /api/admin/products/<id>
+        if path.startswith("/api/admin/products/"):
+            parts = path.split("/")
+            prod_id = parts[4] if len(parts) > 4 else ""
+            self._set_headers(200)
+            self.wfile.write(json.dumps({"success": True, "message": f"Joya {prod_id} actualizada"}).encode('utf-8'))
+            return
+
+        self._set_headers(404)
+        self.wfile.write(json.dumps({"success": False, "error": "Ruta no encontrada"}).encode('utf-8'))

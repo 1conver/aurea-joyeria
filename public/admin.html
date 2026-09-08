@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Backoffice Modular & Operaciones | ÁUREA Atelier</title>
+  <meta name="robots" content="noindex, nofollow">
+
+  <!-- Tipografías Oficiales -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Estilos -->
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body class="admin-body">
+
+  <!-- =========================================================================
+       1. PANTALLA DE INICIO DE SESIÓN (LOGIN DE PERSONAL)
+       ========================================================================= -->
+  <div id="login-view" class="login-wrapper">
+    <div class="login-card">
+      <div class="login-brand-title">ÁUREA</div>
+      <div style="font-size: 0.65rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--gold-dark); font-weight: 600; margin-bottom: 2rem;">
+        Acceso Exclusivo de Personal & Taller
+      </div>
+
+      <form id="admin-login-form">
+        <div class="form-group" style="text-align: left; margin-bottom: 1.2rem;">
+          <label class="form-label">Correo Electrónico Institucional</label>
+          <input type="email" id="login-email" class="form-input" placeholder="usuario@aurea-joyeria.com" required value="admin@aurea-joyeria.com">
+        </div>
+
+        <div class="form-group" style="text-align: left; margin-bottom: 1.8rem;">
+          <label class="form-label">Contraseña</label>
+          <input type="password" id="login-password" class="form-input" placeholder="••••••••" required value="aurea2026">
+        </div>
+
+        <button type="submit" class="btn-luxury" style="width: 100%;" id="btn-submit-login">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.4"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          <span>Ingresar al Sistema</span>
+        </button>
+      </form>
+
+      <!-- Botones de Prueba Rápida de Roles -->
+      <div class="login-quick-roles">
+        <div style="font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); font-weight: 600;">
+          Accesos de Demostración:
+        </div>
+        <button type="button" class="quick-role-btn" onclick="fillLogin('admin@aurea-joyeria.com', 'aurea2026')">
+          <div>
+            <strong style="display: block; color: var(--text-primary);">Director General (Admin)</strong>
+            <span>Control total: Catálogo, Textos, Ofertas y Operarios</span>
+          </div>
+          <span style="color: var(--gold-dark); font-weight: 700;">Cargar</span>
+        </button>
+
+        <button type="button" class="quick-role-btn" onclick="fillLogin('taller@aurea-joyeria.com', 'taller123')">
+          <div>
+            <strong style="display: block; color: var(--text-primary);">Maestro Orfebre (Operario)</strong>
+            <span>Enfocado en Taller, Preparación y Logística Andreani</span>
+          </div>
+          <span style="color: var(--gold-dark); font-weight: 700;">Cargar</span>
+        </button>
+      </div>
+
+      <div style="margin-top: 2rem;">
+        <a href="/" target="_blank" style="font-size: 0.75rem; color: var(--text-muted); text-decoration: underline;">
+          ← Volver a la Tienda Pública
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       2. PANEL PRINCIPAL MODULAR (VISIBLE TRAS AUTENTICARSE)
+       ========================================================================= -->
+  <div id="dashboard-view" style="display: none;">
+    
+    <!-- Barra Superior -->
+    <header class="admin-topbar">
+      <div class="admin-brand">
+        <div class="admin-brand-title">ÁUREA</div>
+        <span class="user-role-badge" id="header-role-badge">Admin</span>
+        <span style="font-size: 0.8rem; color: #D6CEBE;" id="header-user-name">Cargando...</span>
+      </div>
+
+      <div class="admin-actions">
+        <a href="/" target="_blank" class="admin-btn-store">
+          <span>Ver Tienda Pública</span>
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        </a>
+        <button class="btn-luxury-outline" style="color: #FAF8F5; border-color: rgba(255,255,255,0.25); padding: 0.45rem 0.9rem; font-size: 0.75rem;" onclick="logout()">
+          <span>Cerrar Sesión</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Barra Modular de Pestañas / Switch -->
+    <div style="background-color: #1F1D1B; border-bottom: 1px solid rgba(197,168,128,0.2); padding: 0.6rem 2rem;">
+      <div class="container" style="padding: 0; display: flex; align-items: center; justify-content: space-between;">
+        <nav class="admin-module-switch" aria-label="Módulos del panel">
+          <button class="admin-tab-btn active" data-tab="orders" onclick="switchModule('orders')">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><path d="M15 18H9"/><path d="M19 18h2a1 1 0 0 0 1-1v-5.28a2 2 0 0 0-.59-1.42L18.7 7.59A2 2 0 0 0 17.28 7H14v11h1"/><circle cx="7" cy="18" r="2"/><circle cx="17" cy="18" r="2"/></svg>
+            <span>Taller & Despachos</span>
+          </button>
+          
+          <button class="admin-tab-btn admin-only-tab" data-tab="catalog" onclick="switchModule('catalog')">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="12" cy="12" r="10"/><path d="m4.93 4.93 4.24 4.24"/><path d="m14.83 9.17 4.24-4.24"/><path d="m14.83 14.83 4.24 4.24"/><path d="m9.17 14.83-4.24 4.24"/></svg>
+            <span>Catálogo & Precios</span>
+          </button>
+
+          <button class="admin-tab-btn admin-only-tab" data-tab="marketing" onclick="switchModule('marketing')">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.4"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            <span>Ofertas & Portada</span>
+          </button>
+
+          <button class="admin-tab-btn admin-only-tab" data-tab="team" onclick="switchModule('team')">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            <span>Equipo & Operarios</span>
+          </button>
+        </nav>
+
+        <div style="font-size: 0.72rem; color: #B8B0A2;">
+          Autenticación Bancaria: <span style="color: #4BB543; font-weight: 700;">AUTOMÁTICA (GATEWAY ACTIVO)</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Contenido Modular -->
+    <main class="container" style="margin-top: 2rem;">
+
+      <!-- =====================================================================
+           MÓDULO 1: TALLER & DESPACHOS (OPERARIOS & ADMIN)
+           ===================================================================== -->
+      <section id="module-orders" class="admin-section-view">
+        <!-- KPIs -->
+        <div class="stats-strip">
+          <div class="kpi-card">
+            <span class="kpi-label">Facturación Confirmada</span>
+            <div class="kpi-val" id="kpi-revenue">$0</div>
+            <span class="kpi-sub">Total cobrado automáticamente</span>
+          </div>
+
+          <div class="kpi-card" id="kpi-card-transfers">
+            <span class="kpi-label">Transferencias a Validar</span>
+            <div class="kpi-val" id="kpi-pending-transfers">0</div>
+            <span class="kpi-sub">Comprobantes de CBU/Alias</span>
+          </div>
+
+          <div class="kpi-card">
+            <span class="kpi-label">En Taller Orfebre</span>
+            <div class="kpi-val" id="kpi-workshop">0</div>
+            <span class="kpi-sub">Ajuste de medidas y pulido</span>
+          </div>
+
+          <div class="kpi-card">
+            <span class="kpi-label">En Tránsito Andreani</span>
+            <div class="kpi-val" id="kpi-transit">0</div>
+            <span class="kpi-sub">Guías activas con seguimiento</span>
+          </div>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 1.5rem;">
+          <div>
+            <h1 class="serif-font" style="font-size: 2.2rem; color: var(--text-primary); margin-bottom: 0.2rem;">
+              Bandeja de Pedidos & Logística
+            </h1>
+            <p style="font-size: 0.85rem; color: var(--text-muted);">
+              Cobros validados en tiempo real. Asignación de remito y despacho físico a domicilio.
+            </p>
+          </div>
+          <div style="font-size: 0.82rem; font-weight: 600; color: var(--gold-dark);" id="orders-total-count">
+            Cargando pedidos...
+          </div>
+        </div>
+
+        <!-- Filtros -->
+        <div class="admin-toolbar">
+          <div class="admin-search-wrap">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.3" style="color: var(--text-muted);"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+            <input type="text" id="admin-search" class="admin-search-input" placeholder="Buscar por código (AUR-...), cliente, DNI o guía...">
+          </div>
+
+          <div class="admin-filters-row">
+            <div>
+              <span style="font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); margin-right: 0.3rem;">Cobro:</span>
+              <select id="admin-status-filter" class="select-minimal">
+                <option value="all">Todos los cobros</option>
+                <option value="approved">Aprobados</option>
+                <option value="pending_verification">Pendientes CBU</option>
+                <option value="rejected">Rechazados</option>
+              </select>
+            </div>
+
+            <div>
+              <span style="font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); margin-right: 0.3rem;">Logística:</span>
+              <select id="admin-shipping-filter" class="select-minimal">
+                <option value="all">Todos los estados</option>
+                <option value="in_workshop">En Taller Orfebre</option>
+                <option value="in_transit">En Tránsito Andreani</option>
+                <option value="delivered">Entregados</option>
+                <option value="pending">Aguardando Cobro</option>
+              </select>
+            </div>
+
+            <div>
+              <span style="font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); margin-right: 0.3rem;">Medio:</span>
+              <select id="admin-method-filter" class="select-minimal">
+                <option value="all">Todos los medios</option>
+                <option value="mercadopago">Mercado Pago</option>
+                <option value="credit_card">Tarjetas de Crédito</option>
+                <option value="bank_transfer">Transferencia Bancaria</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tabla -->
+        <div class="admin-table-card">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Código / Fecha</th>
+                <th>Cliente & DNI</th>
+                <th>Joyas Solicitadas</th>
+                <th>Total (ARS)</th>
+                <th>Estado de Cobro</th>
+                <th>Logística & Taller</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="orders-table-body">
+              <!-- Renderizado dinámico -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- =====================================================================
+           MÓDULO 2: CATÁLOGO & PRECIOS (SOLO ADMIN)
+           ===================================================================== -->
+      <section id="module-catalog" class="admin-section-view" style="display: none;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 2rem;">
+          <div>
+            <h1 class="serif-font" style="font-size: 2.2rem; color: var(--text-primary); margin-bottom: 0.2rem;">
+              Administración de Catálogo & Precios
+            </h1>
+            <p style="font-size: 0.85rem; color: var(--text-muted);">
+              Ajustá los precios en Pesos Argentinos (ARS) y controlá la disponibilidad de piezas en tiempo real.
+            </p>
+          </div>
+          <button class="btn-luxury" onclick="openCreateProductModal()">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M12 5v14M5 12h14"/></svg>
+            <span>Dar de Alta Joya</span>
+          </button>
+        </div>
+
+        <div class="admin-table-card">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Pieza de Joyería</th>
+                <th>Categoría / Metal</th>
+                <th>Precio en ARS ($)</th>
+                <th>Disponibilidad</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="catalog-table-body">
+              <!-- Renderizado dinámico -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- =====================================================================
+           MÓDULO 3: OFERTAS & TEXTOS DE PORTADA (SOLO ADMIN)
+           ===================================================================== -->
+      <section id="module-marketing" class="admin-section-view" style="display: none;">
+        <div style="margin-bottom: 2rem;">
+          <h1 class="serif-font" style="font-size: 2.2rem; color: var(--text-primary); margin-bottom: 0.2rem;">
+            Textos, Ofertas & Banners de Tienda
+          </h1>
+          <p style="font-size: 0.85rem; color: var(--text-muted);">
+            Editá los mensajes promocionales, el porcentaje de descuento por transferencia y los claims editoriales.
+          </p>
+        </div>
+
+        <div class="admin-form-card" style="max-width: 800px;">
+          <form id="store-settings-form">
+            <div class="form-group" style="margin-bottom: 1.5rem;">
+              <label class="form-label">Cintillo Superior de Ofertas (Top Ticker)</label>
+              <input type="text" id="set-ticker" class="form-input" required>
+              <span style="font-size: 0.72rem; color: var(--text-muted);">Aparece fijo en el margen superior de la tienda. Separar frases con /</span>
+            </div>
+
+            <div class="form-row" style="margin-bottom: 1.5rem;">
+              <div class="form-group">
+                <label class="form-label">Etiqueta de Portada (Hero Tag)</label>
+                <input type="text" id="set-hero-tag" class="form-input" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Descuento por Transferencia (%)</label>
+                <input type="number" id="set-discount" class="form-input" min="0" max="50" required>
+              </div>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 1.5rem;">
+              <label class="form-label">Titular Principal (Hero Title)</label>
+              <input type="text" id="set-hero-title" class="form-input" required>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 2rem;">
+              <label class="form-label">Manifiesto / Descripción de Portada (Hero Desc)</label>
+              <textarea id="set-hero-desc" class="form-input" rows="3" required></textarea>
+            </div>
+
+            <button type="submit" class="btn-luxury">
+              <span>Guardar y Publicar en Tienda</span>
+            </button>
+          </form>
+        </div>
+      </section>
+
+      <!-- =====================================================================
+           MÓDULO 4: GESTIÓN DE EQUIPO & OPERARIOS (SOLO ADMIN)
+           ===================================================================== -->
+      <section id="module-team" class="admin-section-view" style="display: none;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 2rem;">
+          <div>
+            <h1 class="serif-font" style="font-size: 2.2rem; color: var(--text-primary); margin-bottom: 0.2rem;">
+              Equipo del Atelier & Operarios
+            </h1>
+            <p style="font-size: 0.85rem; color: var(--text-muted);">
+              Administrá los permisos y creá nuevas cuentas para los orfebres y encargados de logística.
+            </p>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 2.5rem; align-items: start;">
+          <!-- Tabla de usuarios -->
+          <div class="admin-table-card">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Nombre</th>
+                  <th>Correo</th>
+                  <th>Rol</th>
+                  <th>Alta</th>
+                </tr>
+              </thead>
+              <tbody id="team-table-body">
+                <!-- Renderizado dinámico -->
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Formulario de Alta de Operario -->
+          <div class="admin-form-card">
+            <h3 style="font-family: var(--font-serif); font-size: 1.6rem; margin-bottom: 1.2rem;">Crear Nueva Cuenta</h3>
+            <form id="create-user-form">
+              <div class="form-group" style="margin-bottom: 1.2rem;">
+                <label class="form-label">Nombre y Apellido</label>
+                <input type="text" id="new-user-name" class="form-input" placeholder="Ej. Facundo Rossi" required>
+              </div>
+
+              <div class="form-group" style="margin-bottom: 1.2rem;">
+                <label class="form-label">Correo Institucional</label>
+                <input type="email" id="new-user-email" class="form-input" placeholder="facundo@aurea-joyeria.com" required>
+              </div>
+
+              <div class="form-group" style="margin-bottom: 1.2rem;">
+                <label class="form-label">Contraseña Temporal</label>
+                <input type="password" id="new-user-password" class="form-input" placeholder="••••••••" required>
+              </div>
+
+              <div class="form-group" style="margin-bottom: 1.6rem;">
+                <label class="form-label">Rol Asignado</label>
+                <select id="new-user-role" class="form-select">
+                  <option value="operario" selected>Operario de Taller & Logística (Solo pedidos)</option>
+                  <option value="admin">Administrador General (Control total)</option>
+                </select>
+              </div>
+
+              <button type="submit" class="btn-luxury" style="width: 100%;">
+                <span>Dar de Alta en el Sistema</span>
+              </button>
+            </form>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+  </div>
+
+  <!-- Modal Genérico de Administración -->
+  <div class="modal-overlay" id="admin-modal-overlay">
+    <div id="admin-modal-content"></div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="/js/icons.js"></script>
+  <script src="/js/admin.js"></script>
+</body>
+</html>

@@ -1,0 +1,29 @@
+[
+  {
+    "id": "USR-001",
+    "name": "Santiago Albarracín",
+    "email": "admin@aurea-joyeria.com",
+    "password": "aurea2026",
+    "role": "admin",
+    "role_label": "Administrador General & Dirección",
+    "created_at": "01/08/2026"
+  },
+  {
+    "id": "USR-002",
+    "name": "Martín Benítez",
+    "email": "taller@aurea-joyeria.com",
+    "password": "taller123",
+    "role": "operario",
+    "role_label": "Maestro Orfebre & Logística",
+    "created_at": "15/08/2026"
+  },
+  {
+    "id": "USR-47E2",
+    "name": "Lucía Morales",
+    "email": "lucia@aurea-joyeria.com",
+    "password": "orfebrerialucia",
+    "role": "operario",
+    "role_label": "Maestro Orfebre & Logística",
+    "created_at": "08/09/2026"
+  }
+]

@@ -1,0 +1,222 @@
+[
+  {
+    "id": "aurea-01",
+    "name": "Anillo Sello Ondulado",
+    "category": "anillos",
+    "category_label": "Anillos",
+    "metal": "Oro 18K",
+    "metal_group": "oro",
+    "price": 285000,
+    "badge": "Best Seller",
+    "featured": true,
+    "primary_image": "https://images.unsplash.com/photo-1605100804763-247f67b3557e?auto=format&fit=crop&w=900&q=85",
+    "secondary_image": "https://images.unsplash.com/photo-1603561591411-07134e71a2a9?auto=format&fit=crop&w=900&q=85",
+    "description": "Anillo de sello contemporáneo con relieve orgánico inspirado en la fluidez del agua. Fundido en oro amarillo de 18 quilates con una terminación satinada mate realizada a mano en nuestro taller.",
+    "specs": {
+      "metal": "Oro Amarillo 18k certificado",
+      "acabado": "Satinado cepillado a mano",
+      "peso_estimado": "4.2 gramos",
+      "origen": "Orfebrería artesanal, Buenos Aires"
+    },
+    "sizes": ["12", "14", "16", "18", "20"],
+    "in_stock": true
+  },
+  {
+    "id": "aurea-02",
+    "name": "Gargantilla Étoile Solitario",
+    "category": "collares",
+    "category_label": "Collares",
+    "metal": "Oro Blanco 18K",
+    "metal_group": "oro-blanco",
+    "price": 490000,
+    "badge": "Alta Joyería",
+    "featured": true,
+    "primary_image": "https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?auto=format&fit=crop&w=900&q=85",
+    "secondary_image": "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?auto=format&fit=crop&w=900&q=85",
+    "description": "Una pieza de elegancia atemporal. Cadena de eslabones barbados ultrafinos de oro blanco de 18 quilates sosteniendo un diamante ético de laboratorio de 0.40 ct con engaste al bisel protector.",
+    "specs": {
+      "metal": "Oro Blanco 18k rodiado",
+      "piedra": "Diamante ético cultivado (0.40 ct, VVS1, Color D)",
+      "longitud": "42 cm con extensor a 45 cm",
+      "cierre": "Mosquetón de seguridad microscópico"
+    },
+    "sizes": ["42 cm", "45 cm"],
+    "in_stock": true
+  },
+  {
+    "id": "aurea-03",
+    "name": "Aros Criollos Sculpt",
+    "category": "aros",
+    "category_label": "Aros",
+    "metal": "Plata 925 Bañada en Oro",
+    "metal_group": "plata",
+    "price": 165000,
+    "badge": "Esenciales",
+    "featured": true,
+    "primary_image": "https://images.unsplash.com/photo-1630019852942-f89202989a59?auto=format&fit=crop&w=900&q=85",
+    "secondary_image": "https://images.unsplash.com/photo-1635767798638-3e25273a8236?auto=format&fit=crop&w=900&q=85",
+    "description": "Argollas de perfil cónico esculpidas con precisión geométrica. Su interior ahuecado garantiza ligereza absoluta para el uso continuado sin renunciar a una presencia rotunda y luminosa.",
+    "specs": {
+      "metal": "Plata de Ley 925 con baño en Oro de 24k (3 micras)",
+      "diametro": "24 mm de diámetro exterior",
+      "cierre": "Articulado a presión invisible",
+      "acabado": "Pulido brillante a espejo"
+    },
+    "sizes": ["Único (24 mm)"],
+    "in_stock": true
+  },
+  {
+    "id": "aurea-04",
+    "name": "Pulsera Rivière Tenis",
+    "category": "pulseras",
+    "category_label": "Pulseras",
+    "metal": "Plata 925 & Cristales",
+    "metal_group": "plata",
+    "price": 220000,
+    "badge": "Clásico",
+    "featured": true,
+    "primary_image": "https://images.unsplash.com/photo-1611591475825-9c9868e82ef6?auto=format&fit=crop&w=900&q=85",
+    "secondary_image": "https://images.unsplash.com/photo-1573408301185-9146fe634ad0?auto=format&fit=crop&w=900&q=85",
+    "description": "Línea continua de circonias cúbicas grado AAA seleccionadas por su refracción idéntica al diamante. Montadas en garras individuales de cuatro puntas que permiten un flujo fluido sobre la muñeca.",
+    "specs": {
+      "metal": "Plata 925 maciza con acabado platino",
+      "piedras": "Circonias cúbicas corte brillante 2.5 mm",
+      "cierre": "Doble traba lateral de seguridad",
+      "ancho": "2.8 mm"
+    },
+    "sizes": ["16 cm", "17.5 cm", "19 cm"],
+    "in_stock": true
+  },
+  {
+    "id": "aurea-05",
+    "name": "Collar Medallón Solar",
+    "category": "collares",
+    "category_label": "Collares",
+    "metal": "Oro 18K",
+    "metal_group": "oro",
+    "price": 340000,
+    "badge": "Edición Limitada",
+    "featured": false,
+    "primary_image": "https://images.unsplash.com/photo-1602751584552-8ba73aad10e1?auto=format&fit=crop&w=900&q=85",
+    "secondary_image": "https://images.unsplash.com/photo-1599643477877-530eb83abc8e?auto=format&fit=crop&w=900&q=85",
+    "description": "Medallón circular fundido en oro macizo con un micro-grabado radial que emula los destellos solares del equinoccio. Cadena forzada de 50 cm para una caída sublime sobre el escote.",
+    "specs": {
+      "metal": "Oro Amarillo 18k macizo",
+      "diametro_medallon": "16 mm",
+      "longitud_cadena": "50 cm",
+      "peso": "5.6 gramos"
+    },
+    "sizes": ["45 cm", "50 cm"],
+    "in_stock": true
+  },
+  {
+    "id": "aurea-06",
+    "name": "Anillo Dual Prisma",
+    "category": "anillos",
+    "category_label": "Anillos",
+    "metal": "Oro Blanco 18K",
+    "metal_group": "oro-blanco",
+    "price": 410000,
+    "badge": "Alta Joyería",
+    "featured": true,
+    "primary_image": "https://images.unsplash.com/photo-1603561596112-0a132b757442?auto=format&fit=crop&w=900&q=85",
+    "secondary_image": "https://images.unsplash.com/photo-1605100804763-247f67b3557e?auto=format&fit=crop&w=900&q=85",
+    "description": "Arquitectura minimalista en dos líneas paralelas que enmarcan el vacío. Una de las barras porta un diamante corte baguette de 0.25 ct engarzado a ras para un perfil contemporáneo.",
+    "specs": {
+      "metal": "Oro Blanco 18k",
+      "piedra": "Diamante corte baguette 0.25 ct (G/VS2)",
+      "estructura": "Diseño abierto ergonómico",
+      "acabado": "Pulido brillante con cantos suaves"
+    },
+    "sizes": ["12", "14", "16", "18"],
+    "in_stock": true
+  },
+  {
+    "id": "aurea-07",
+    "name": "Aros Gota de Lluvia",
+    "category": "aros",
+    "category_label": "Aros",
+    "metal": "Oro 18K",
+    "metal_group": "oro",
+    "price": 195000,
+    "badge": "Nuevo",
+    "featured": false,
+    "primary_image": "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?auto=format&fit=crop&w=900&q=85",
+    "secondary_image": "https://images.unsplash.com/photo-1630019852942-f89202989a59?auto=format&fit=crop&w=900&q=85",
+    "description": "Silueta de gota orgánica suspendida de un perno minimalista. Su diseño hueco electroformado proporciona volumen escultural sin sensación de peso en el lóbulo.",
+    "specs": {
+      "metal": "Oro Amarillo 18k",
+      "longitud": "30 mm de caída",
+      "cierre": "Perno con tuerca mariposa reforzada",
+      "acabado": "Espejo de alto brillo"
+    },
+    "sizes": ["Único (30 mm)"],
+    "in_stock": true
+  },
+  {
+    "id": "aurea-08",
+    "name": "Brazalete Rígido Brume",
+    "category": "pulseras",
+    "category_label": "Pulseras",
+    "metal": "Oro 18K",
+    "metal_group": "oro",
+    "price": 520000,
+    "badge": "Edición Limitada",
+    "featured": true,
+    "primary_image": "https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?auto=format&fit=crop&w=900&q=85",
+    "secondary_image": "https://images.unsplash.com/photo-1611591475825-9c9868e82ef6?auto=format&fit=crop&w=900&q=85",
+    "description": "Torque rígido ovalado de sección plana y bordes levemente redondeados. Cuenta con una bisagra elástica de precisión que facilita colocarlo con naturalidad sobre la muñeca.",
+    "specs": {
+      "metal": "Oro Amarillo 18k",
+      "grosor": "4.5 mm de sección",
+      "cierre": "Bisagra de tensión oculta con traba de clic",
+      "peso": "11.8 gramos"
+    },
+    "sizes": ["S (15-16 cm)", "M (17-18 cm)"],
+    "in_stock": true
+  },
+  {
+    "id": "aurea-09",
+    "name": "Alianza Facetada Cincel",
+    "category": "anillos",
+    "category_label": "Anillos",
+    "metal": "Plata 925",
+    "metal_group": "plata",
+    "price": 125000,
+    "badge": "Esenciales",
+    "featured": false,
+    "primary_image": "https://images.unsplash.com/photo-1605100804763-247f67b3557e?auto=format&fit=crop&w=900&q=85",
+    "secondary_image": "https://images.unsplash.com/photo-1603561591411-07134e71a2a9?auto=format&fit=crop&w=900&q=85",
+    "description": "Banda de plata de ley 925 con microfacetas geométricas esculpidas manualmente. Cada faceta refracta la luz con destellos sutiles según el ángulo de observación.",
+    "specs": {
+      "metal": "Plata 925 maciza libre de níquel",
+      "ancho_banda": "3.5 mm",
+      "perfil": "Confort fit interior",
+      "acabado": "Facetado a buril y lustre satinado"
+    },
+    "sizes": ["14", "16", "18", "20", "22", "24"],
+    "in_stock": true
+  },
+  {
+    "id": "aurea-10",
+    "name": "Cadena Veneciana de Oro",
+    "category": "collares",
+    "category_label": "Collares",
+    "metal": "Oro 18K",
+    "metal_group": "oro",
+    "price": 315000,
+    "badge": "Clásico",
+    "featured": false,
+    "primary_image": "https://images.unsplash.com/photo-1599643477877-530eb83abc8e?auto=format&fit=crop&w=900&q=85",
+    "secondary_image": "https://images.unsplash.com/photo-1602751584552-8ba73aad10e1?auto=format&fit=crop&w=900&q=85",
+    "description": "Eslabones cúbicos italianos compactos que crean una cinta dorada fluida y sin tropiezos. Pieza angular para componer capas con otros collares o para portar colgantes de autor.",
+    "specs": {
+      "metal": "Oro Amarillo 18k",
+      "calibre": "1.2 mm de grosor",
+      "longitud": "45 cm",
+      "cierre": "Reasa redonda extrafina de oro 18k"
+    },
+    "sizes": ["40 cm", "45 cm", "50 cm"],
+    "in_stock": true
+  }
+]
