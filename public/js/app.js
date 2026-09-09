@@ -38,6 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
   fetchProducts();
   setupEventListeners();
   updateCartUI();
+  initScrollAnimations();
 });
 
 async function fetchStoreSettings() {
@@ -46,14 +47,15 @@ async function fetchStoreSettings() {
     const data = await res.json();
     if (data.success && data.settings) {
       const s = data.settings;
-      // Actualizar Ticker Superior
-      const tickerEl = document.querySelector('.ticker-content');
-      if (tickerEl && s.ticker_text) {
+      // Actualizar Ticker Superior Continuo (Marquee estilo Brooki Bakehouse)
+      const tickerEls = document.querySelectorAll('.ticker-content');
+      if (tickerEls.length > 0 && s.ticker_text) {
         const parts = s.ticker_text.split('/');
-        tickerEl.innerHTML = parts.map((p, idx) => `
+        const html = parts.map((p) => `
           <span>${p.trim()}</span>
-          ${idx < parts.length - 1 ? '<span class="ticker-sep">/</span>' : ''}
+          <span class="ticker-sep">✦</span>
         `).join('');
+        tickerEls.forEach(el => el.innerHTML = html);
       }
 
       // Actualizar Portada (Hero)
@@ -68,6 +70,20 @@ async function fetchStoreSettings() {
   } catch (e) {
     console.warn('Configuración por defecto en uso');
   }
+}
+
+// Observador para animaciones de revelado suave al hacer scroll (Brooki-style)
+function initScrollAnimations() {
+  if (!('IntersectionObserver' in window)) return;
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('is-visible');
+      }
+    });
+  }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+
+  document.querySelectorAll('.fade-in-scroll').forEach(el => observer.observe(el));
 }
 
 // Inyectar iconos SVG en placeholders marcados con data-icon
@@ -217,11 +233,12 @@ function renderProducts() {
     return;
   }
 
-  gridEl.innerHTML = AppState.filteredProducts.map(product => {
+  gridEl.innerHTML = AppState.filteredProducts.map((product, idx) => {
     const cuota3 = Math.round(product.price / 3);
     const badgeClass = getBadgeStyleClass(product.badge);
+    const staggerDelay = ((idx % 8) * 0.05).toFixed(2);
     return `
-      <article class="product-card" data-product-id="${product.id}">
+      <article class="product-card fade-in-scroll is-visible" style="transition-delay: ${staggerDelay}s;" data-product-id="${product.id}">
         <div class="product-media">
           ${product.badge ? `<span class="card-badge ${badgeClass}">${product.badge}</span>` : ''}
           <img src="${product.primary_image}" alt="${product.name}" class="product-img img-primary" loading="lazy">
@@ -261,6 +278,8 @@ function renderProducts() {
   gridEl.querySelectorAll('.btn-quick-add').forEach(el => {
     el.addEventListener('click', (e) => {
       e.stopPropagation();
+      el.classList.add('btn-pulse-active');
+      setTimeout(() => el.classList.remove('btn-pulse-active'), 350);
       const id = el.getAttribute('data-id');
       const prod = AppState.products.find(p => p.id === id);
       if (prod) {
@@ -270,6 +289,8 @@ function renderProducts() {
       }
     });
   });
+
+  initScrollAnimations();
 }
 
 // --- VISTA RÁPIDA (MODAL) ---
