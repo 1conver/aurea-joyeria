@@ -2023,6 +2023,31 @@ h1, h2, h3, h4, .serif-font {
   display: flex;
   align-items: center;
   gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.card-brands-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 1.2rem;
+  flex-wrap: wrap;
+}
+
+.badge-brand {
+  width: 44px;
+  height: 28px;
+  display: inline-block;
+  vertical-align: middle;
+  border-radius: var(--radius-xs);
+  box-shadow: 0 1px 4px rgba(212, 97, 123, 0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  flex-shrink: 0;
+}
+
+.badge-brand:hover {
+  transform: translateY(-1.5px);
+  box-shadow: 0 3px 10px rgba(212, 97, 123, 0.2);
 }
 
 /* Toast Notifications */
