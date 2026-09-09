@@ -6,6 +6,11 @@ from datetime import datetime
 from aiohttp import web
 import aiohttp_cors
 
+try:
+    from ai_advisor import process_chat_message
+except ImportError:
+    process_chat_message = None
+
 PORT = int(os.environ.get("PORT", 3000))
 MP_ACCESS_TOKEN = os.environ.get("MERCADOPAGO_ACCESS_TOKEN", "").strip()
 
@@ -613,6 +618,31 @@ async def handle_bank_transfer(request):
         )
     })
 
+# --- API DE CHAT CON INTELIGENCIA ARTIFICIAL & GUARDRAIL DE JOYERÍA ---
+
+async def handle_ai_chat(request):
+    """POST /api/chat - Asesoría Virtual Inteligente con Guardrail Exclusivo de Joyería"""
+    try:
+        data = await request.json()
+    except Exception:
+        return web.json_response({"success": False, "error": "Datos inválidos"}, status=400)
+
+    message = str(data.get("message", "")).strip()
+    history = data.get("history", [])
+    products = load_products()
+
+    if process_chat_message:
+        result = process_chat_message(message, history, products)
+    else:
+        result = {
+            "success": True,
+            "reply": "Bienvenido/a a <strong>ÁUREA Atelier</strong>. ¿En qué pieza o consulta de joyería puedo orientarte hoy?",
+            "products": products[:2],
+            "provider": "aurea-fallback"
+        }
+
+    return web.json_response(result)
+
 # --- API DE OPERARIOS: BANDEJA DE PEDIDOS & KPIs ---
 
 async def handle_admin_get_orders(request):
@@ -720,6 +750,7 @@ def create_app():
     app.router.add_post("/api/checkout/preference", handle_create_mp_preference)
     app.router.add_post("/api/checkout/process-card", handle_process_card)
     app.router.add_post("/api/checkout/bank-transfer", handle_bank_transfer)
+    app.router.add_post("/api/chat", handle_ai_chat)
 
     # Rutas de Autenticación
     app.router.add_post("/api/auth/login", handle_login)

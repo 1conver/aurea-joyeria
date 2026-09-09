@@ -10,6 +10,23 @@ from urllib.parse import urlparse, parse_qs
 CURRENT_DIR = os.path.dirname(__file__)
 DATA_DIR = os.path.join(os.path.dirname(CURRENT_DIR), "data")
 
+# Carga del motor de IA especializada
+import sys
+ROOT_DIR = os.path.dirname(CURRENT_DIR)
+if ROOT_DIR not in sys.path:
+    sys.path.insert(0, ROOT_DIR)
+if CURRENT_DIR not in sys.path:
+    sys.path.insert(0, CURRENT_DIR)
+
+try:
+    from ai_advisor import process_chat_message
+except Exception:
+    try:
+        from api.ai_advisor import process_chat_message
+    except Exception:
+        process_chat_message = None
+
+
 def load_data(filename, default_val=None):
     if default_val is None:
         default_val = []
@@ -280,6 +297,25 @@ class handler(BaseHTTPRequestHandler):
                 "instructions": f"Transferí ${final_amount:,.2f} ARS a Alias: AUREA.JOYAS.ARG. Referencia: {order_id}"
             }).encode('utf-8'))
             return
+
+        # POST /api/chat (Asesoría Virtual con IA y Guardrail de Joyería)
+        if path == "/api/chat":
+            message = str(body.get("message", "")).strip()
+            history = body.get("history", [])
+            products = load_data("products.json", [])
+            if process_chat_message:
+                result = process_chat_message(message, history, products)
+            else:
+                result = {
+                    "success": True,
+                    "reply": "Bienvenido/a a <strong>ÁUREA Atelier</strong>. Como asesora de joyería fina, ¿en qué pieza puedo orientarte hoy?",
+                    "products": products[:2],
+                    "provider": "aurea-fallback"
+                }
+            self._set_headers(200)
+            self.wfile.write(json.dumps(result).encode('utf-8'))
+            return
+
 
         self._set_headers(404)
         self.wfile.write(json.dumps({"success": False, "error": "Ruta no encontrada"}).encode('utf-8'))

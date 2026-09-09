@@ -409,6 +409,40 @@ ACTUALIZACIÓN: REDES SOCIALES & ASESORA VIRTUAL CON IA (ÁUREA CONCIERGE)
 
 
 ================================================================================
+ACTUALIZACIÓN: CORRECCIÓN LOGO WHATSAPP & IA CON GUARDRAIL ESTRICTO DE JOYERÍA
+================================================================================
+1. Corrección del Logo de WhatsApp:
+   - Se reemplazó el trazado vectorizado anterior por el glifo oficial relleno (fill="currentColor")
+     con geometría limpia y proporciones exactas (M12.04 2c-5.46...).
+   - Se eliminaron atributos estáticos de ancho/alto para que herede con nitidez los estilos
+     CSS (.icon, .header-icon-btn, .social-badge-btn) tanto en cabecera como en pie de página.
+
+2. Integración de IA con Terceros (Google Gemini / OpenAI):
+   - Nuevo módulo backend: `ai_advisor.py` (y `api/ai_advisor.py` para Vercel Serverless).
+   - Rutas activas: `POST /api/chat` en `server.py` (servidor local aiohttp) y en `api/index.py` (Vercel).
+   - Detección automática de variables de entorno:
+     * `GEMINI_API_KEY`: Invocación directa a Google Gemini (gemini-1.5-flash) sin dependencias pesadas.
+     * `OPENAI_API_KEY`: Invocación directa a OpenAI (gpt-4o-mini).
+     * Fallback local: Motor experto de joyería ÁUREA si no hay clave configurada o hay fallo de red.
+
+3. Entrenamiento Especializado ÚNICA Y EXCLUSIVAMENTE para Joyería:
+   - System Prompt con Guardrail Estricto de Seguridad y Dominio:
+     * La IA actúa como 'Áurea Concierge IA', asesora de alta joyería y gemología de Recoleta.
+     * Conocimiento exhaustivo: Oro 18K macizo (amarillo, blanco al paladio, rosa), Plata 925 rodiada,
+       diamantes cultivados carbono neutro VVS F-G, tabla métrica argentina de talles (12 a 22 mm),
+       métodos de cuidado y pulido perpetuo, 3 y 6 cuotas fijas sin interés (Mercado Pago), 15% OFF
+       por transferencia (Alias: AUREA.JOYAS.ARG) y envíos bonificados por Andreani.
+     * Rechazo Obligatorio de Temas Ajenos (Off-Topic Guardrail):
+       Si el usuario pregunta sobre programación, deportes, política, recetas de cocina, matemática,
+       noticias u otros temas fuera del taller, la IA se niega de inmediato con cortesía y elegancia:
+       "Disculpas, como asesora de ÁUREA Atelier estoy capacitada única y exclusivamente para orientarte
+       sobre nuestras piezas de joyería fina, metales nobles, gemología, talles y compras en el atelier.
+       ¿En qué pieza o inquietud de joyería puedo ayudarte hoy?"
+     * La restricción está blindada tanto a nivel de Prompt del Sistema para las APIs de terceros
+       como en expresiones regulares de filtrado preventivo en backend y cliente (`app.js`).
+
+
+================================================================================
 5. CÓMO EJECUTAR LOCALMENTE
 ================================================================================
 1. Abrir PowerShell en Windows
@@ -422,3 +456,4 @@ ACTUALIZACIÓN: REDES SOCIALES & ASESORA VIRTUAL CON IA (ÁUREA CONCIERGE)
 ================================================================================
 FIN DEL ARCHIVO
 ================================================================================
+

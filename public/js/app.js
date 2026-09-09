@@ -1285,6 +1285,9 @@ function initAIChatAdvisor() {
   const inputEl = document.getElementById('ai-chat-input');
   const messagesEl = document.getElementById('ai-chat-messages');
 
+  // Historial de conversación para contexto de IA
+  const chatHistory = [];
+
   if (!widgetEl || !triggerBtn || !formEl) return;
 
   function toggleChat(forceOpen = null) {
@@ -1338,6 +1341,7 @@ function initAIChatAdvisor() {
           </button>
         </div>
       `;
+      chatHistory.length = 0;
       if (window.initIcons) window.initIcons(messagesEl);
       scrollChatToBottom();
       showToast('Conversación reiniciada');
@@ -1454,13 +1458,41 @@ function initAIChatAdvisor() {
     appendUserMessage(query);
     showTypingIndicator();
 
-    // Simulación de procesamiento de lenguaje natural
-    await new Promise(r => setTimeout(r, 650));
+    chatHistory.push({ role: 'user', text: query });
+
+    let botReply = '';
+    let matchedProducts = [];
+
+    try {
+      // 1. Intentar llamar al endpoint de backend (conectado a Gemini / OpenAI o motor experto)
+      const res = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: query, history: chatHistory })
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        if (data && data.success && data.reply) {
+          botReply = data.reply;
+          matchedProducts = data.products || [];
+        }
+      }
+    } catch (err) {
+      console.warn('Backend chat no disponible, recurriendo al motor de joyería del cliente:', err);
+    }
+
+    // 2. Si no hubo respuesta del backend, recurrir al motor experto especializado del cliente
+    if (!botReply) {
+      await new Promise(r => setTimeout(r, 450));
+      const localResponse = generateAIResponse(query);
+      botReply = localResponse.text;
+      matchedProducts = localResponse.products || [];
+    }
 
     removeTypingIndicator();
-
-    const responseData = generateAIResponse(query);
-    appendBotMessage(responseData.text, responseData.products);
+    appendBotMessage(botReply, matchedProducts);
+    chatHistory.push({ role: 'assistant', text: botReply });
   }
 
   function escapeHTML(str) {
@@ -1470,11 +1502,31 @@ function initAIChatAdvisor() {
   }
 }
 
+// Patrones de detección para temas ajenos a la joyería (Guardrail Estricto)
+const OFF_TOPIC_REGEX = /\b(python|javascript|typescript|react|html|css|php|java|c\+\+|sql|codigo|código|programar|programacion|programación|script|bug|api|backend|frontend|futbol|fútbol|messi|maradona|river|boca|partido|mundial|champions|gol|deporte|tenis|nba|politica|política|presidente|elecciones|gobierno|milei|cristina|macri|receta|cocinar|torta|brownie|pasta|asado|horno|matematica|matemática|ecuacion|ecuación|raiz cuadrada|derivada|calcular|cuanto es|clima|pronostico|pronóstico|temperatura|va a llover|chiste|broma|cuento|pelicula|película|serie|netflix|spotify|cancion|canción)\b/i;
+
+const JEWELRY_REGEX = /\b(joya|joyas|joyería|joyeria|anillo|anillos|alianza|alianzas|solitario|collar|collares|gargantilla|aros|arito|aritos|argolla|pulsera|pulseras|brazalete|oro|plata|platino|rodio|quilate|quilates|18k|925|diamante|diamantes|gema|gemas|piedra|piedras|brillante|zafiro|esmeralda|rubi|rubí|perla|talle|talles|talla|medida|medir|milimetro|milímetro|mm|dedo|compra|comprar|precio|costo|valor|cuota|cuotas|tarjeta|mercado pago|mercadopago|transferencia|descuento|banco|envio|envios|envíos|andreani|entrega|demora|despacho|retiro|taller|atelier|recoleta|alvear|aurea|áurea|regalo|regalos|aniversario|compromiso|casamiento|boda|novia|novio|limpieza|limpiar|cuidado|mantenimiento|garantia|garantía|certificado)\b/i;
+
 function generateAIResponse(rawQuery) {
   const query = rawQuery.toLowerCase().trim();
   const products = AppState.products || [];
 
-  // 1. Talles de anillo y medidas
+  // GUARDRAIL ESTRICTO: Rechazar de inmediato cualquier consulta ajena a la joyería
+  const hasJewelry = JEWELRY_REGEX.test(query);
+  const isOffTopic = OFF_TOPIC_REGEX.test(query);
+
+  if (isOffTopic && !hasJewelry) {
+    return {
+      text: `
+        Disculpas, como asesora de <strong>ÁUREA Atelier</strong> estoy capacitada única y exclusivamente para orientarte sobre nuestras piezas de joyería fina, metales nobles, gemología, talles y compras en el atelier.
+        <br><br>
+        ¿En qué pieza o inquietud de joyería puedo ayudarte hoy?
+      `,
+      products: []
+    };
+  }
+
+  // 1. Talles de anillo y medidas (Tabla métrica argentina)
   if (query.includes('talle') || query.includes('talla') || query.includes('medir') || query.includes('medida') || query.includes('dedo') || query.includes('anillo')) {
     const ringProds = products.filter(p => p.category === 'anillos' || p.name.toLowerCase().includes('anillo') || p.name.toLowerCase().includes('solitario'));
     return {
@@ -1527,7 +1579,7 @@ function generateAIResponse(rawQuery) {
         Contamos con los siguientes beneficios de pago en Argentina:
         <br><br>
         • <strong>3 y 6 Cuotas Sin Interés</strong> con tarjetas de crédito bancarias Visa, Mastercard y American Express procesadas por <strong>Mercado Pago</strong>.<br>
-        • <strong>15% de Descuento Especial</strong> abonando mediante Transferencia Bancaria directa.<br>
+        • <strong>15% de Descuento Especial</strong> abonando mediante Transferencia Bancaria directa (Alias: <code>AUREA.JOYAS.ARG</code>).<br>
         • Pagos protegidos con encriptación de nivel bancario.
       `,
       products: products.slice(0, 2)
@@ -1548,7 +1600,21 @@ function generateAIResponse(rawQuery) {
     };
   }
 
-  // 6. Regalos, ocasiones especiales o aniversarios
+  // 6. Cuidado y limpieza
+  if (query.includes('limpieza') || query.includes('limpiar') || query.includes('cuidado') || query.includes('mantener') || query.includes('mantenimiento')) {
+    return {
+      text: `
+        Para preservar el resplandor de tus alhajas:<br><br>
+        • Lavá la pieza con agua tibia y jabón neutro, empleando un cepillo de cerdas ultrasuaves.<br>
+        • Secá suavemente con un paño de microfibra.<br>
+        • Evitá la exposición a cloro, piscinas y fragancias directas.<br><br>
+        Recordá que disponés de <strong>mantenimiento y pulido anual bonificado de por vida</strong> en nuestro atelier.
+      `,
+      products: []
+    };
+  }
+
+  // 7. Regalos, ocasiones especiales o aniversarios
   if (query.includes('regalo') || query.includes('aniversario') || query.includes('novia') || query.includes('compromiso') || query.includes('cumple') || query.includes('recomendar') || query.includes('especial')) {
     const featuredProds = products.filter(p => p.badge && (p.badge.toLowerCase().includes('exclusivo') || p.badge.toLowerCase().includes('más vendido') || p.badge.toLowerCase().includes('autor')));
     return {
@@ -1561,7 +1627,7 @@ function generateAIResponse(rawQuery) {
     };
   }
 
-  // 7. Búsqueda por categorías específicas (aros, collares, pulseras, etc.)
+  // 8. Búsqueda por categorías específicas (aros, collares, pulseras, etc.)
   if (query.includes('aro') || query.includes('collar') || query.includes('pulsera') || query.includes('gargantilla') || query.includes('solitario')) {
     let catKey = 'todos';
     if (query.includes('aro')) catKey = 'aros';
@@ -1577,7 +1643,7 @@ function generateAIResponse(rawQuery) {
     }
   }
 
-  // 8. Respuesta amigable por defecto
+  // 9. Respuesta amigable por defecto dentro del dominio de joyería
   return {
     text: `
       Como asesora de <strong>ÁUREA Atelier</strong>, puedo orientarte sobre:
