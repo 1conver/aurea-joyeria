@@ -2094,8 +2094,8 @@ h1, h2, h3, h4, .serif-font {
 
 .fade-in-scroll {
   opacity: 0;
-  transform: translateY(24px);
-  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  transform: translateY(32px);
+  transition: opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1), transform 0.85s cubic-bezier(0.16, 1, 0.3, 1);
   will-change: opacity, transform;
 }
 
@@ -2103,6 +2103,22 @@ h1, h2, h3, h4, .serif-font {
   opacity: 1;
   transform: translateY(0);
 }
+
+/* Evitar retraso de hover tras la revelación */
+.product-card.is-visible:hover,
+.collection-bubble-card.is-visible:hover,
+.pillar-card.is-visible:hover {
+  transition-delay: 0s !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fade-in-scroll {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+}
+
 
 /* Animación de apertura suave de modales */
 .product-modal-card, .checkout-modal-card {

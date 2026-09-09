@@ -377,6 +377,20 @@ Ver archivo local: C:\Users\Aco\.gemini\antigravity-ide\scratch\aurea-joyeria\ap
 
 
 ================================================================================
+ACTUALIZACIÓN: ANIMACIONES DE DESLIZAMIENTO AL HACER SCROLL (Brooki Bakehouse)
+================================================================================
+- Animaciones de revelado progresivo (fade-in & slide-up): A medida que el usuario
+  baja en la página, los artículos del catálogo, categorías de colección,
+  manifiesto del taller y columnas del pie de página van deslizándose suavemente
+  hacia arriba (translateY 32px a 0 con curva bezier 0.16, 1, 0.3, 1).
+- Escalado dinámico (staggered delay): En desktop de a 4 columnas (0s, 0.08s, 0.16s, 0.24s)
+  y en móvil de a 2 columnas (0s, 0.08s) para un efecto cascada fluido.
+- IntersectionObserver reactivo y optimizado con limpieza de retrasos tras la
+  animación para una interacción instantánea de hover.
+- Respeto a preferencias de accesibilidad con @media (prefers-reduced-motion).
+
+
+================================================================================
 5. CÓMO EJECUTAR LOCALMENTE
 ================================================================================
 1. Abrir PowerShell en Windows

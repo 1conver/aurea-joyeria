@@ -73,18 +73,34 @@ async function fetchStoreSettings() {
   }
 }
 
-// Observador para animaciones de revelado suave al hacer scroll (Brooki-style)
-function initScrollAnimations() {
-  if (!('IntersectionObserver' in window)) return;
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('is-visible');
-      }
-    });
-  }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+// Observador reutilizable para animaciones de deslizamiento al hacer scroll (Estilo Brooki Bakehouse)
+let scrollObserver = null;
 
-  document.querySelectorAll('.fade-in-scroll').forEach(el => observer.observe(el));
+function initScrollAnimations() {
+  if (!('IntersectionObserver' in window)) {
+    document.querySelectorAll('.fade-in-scroll').forEach(el => el.classList.add('is-visible'));
+    return;
+  }
+
+  if (!scrollObserver) {
+    scrollObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+          scrollObserver.unobserve(entry.target);
+          setTimeout(() => {
+            if (entry.target && entry.target.style) {
+              entry.target.style.transitionDelay = '0s';
+            }
+          }, 950);
+        }
+      });
+    }, { threshold: 0.04, rootMargin: '0px 0px -30px 0px' });
+  }
+
+  document.querySelectorAll('.fade-in-scroll:not(.is-visible)').forEach(el => {
+    scrollObserver.observe(el);
+  });
 }
 
 // Inyectar iconos SVG en placeholders marcados con data-icon
@@ -270,9 +286,11 @@ function renderProducts() {
   gridEl.innerHTML = AppState.filteredProducts.map((product, idx) => {
     const cuota3 = Math.round(product.price / 3);
     const badgeClass = getBadgeStyleClass(product.badge);
-    const staggerDelay = ((idx % 8) * 0.05).toFixed(2);
+    const isMobile = window.innerWidth < 768;
+    const cols = isMobile ? 2 : 4;
+    const staggerDelay = ((idx % cols) * 0.08).toFixed(2);
     return `
-      <article class="product-card fade-in-scroll is-visible" style="transition-delay: ${staggerDelay}s;" data-product-id="${product.id}">
+      <article class="product-card fade-in-scroll" style="transition-delay: ${staggerDelay}s;" data-product-id="${product.id}">
         <div class="product-media">
           ${product.badge ? `<span class="card-badge ${badgeClass}">${product.badge}</span>` : ''}
           <img src="${product.primary_image}" alt="${product.name}" class="product-img img-primary" loading="lazy">
