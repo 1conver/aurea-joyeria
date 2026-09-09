@@ -49,7 +49,7 @@
   <!-- Cabecera Principal -->
   <header class="site-header">
     <div class="container header-inner">
-      <!-- Navegación Primaria Ampliada -->
+      <!-- Navegación Primaria Ampliada (Desktop) -->
       <nav class="nav-links" aria-label="Navegación principal">
         <a href="#catalogo" class="nav-item active" onclick="selectNavCategory('todos')">Colección</a>
         <a href="#catalogo" class="nav-item" onclick="selectNavCategory('anillos')">Anillos</a>
@@ -70,9 +70,9 @@
       <!-- Acciones de Usuario -->
       <div class="header-actions">
         <!-- Buscador sutil integrado -->
-        <div style="display: flex; align-items: center; background: var(--bg-subtle); padding: 0.35rem 0.8rem; border-radius: var(--radius-full); border: 1px solid var(--border-light);">
-          <span style="color: var(--text-muted); display: flex; align-items: center; margin-right: 0.4rem;" data-icon="search"></span>
-          <input type="text" id="header-search-input" placeholder="Buscar por pieza o metal..." style="font-size: 0.78rem; width: 160px; outline: none;">
+        <div class="header-search-wrap">
+          <span style="color: var(--pastel-rose-deep); display: flex; align-items: center; margin-right: 0.4rem;" data-icon="search"></span>
+          <input type="text" id="header-search-input" placeholder="Buscar joya..." class="header-search-field">
         </div>
 
         <!-- Botón de Bolsa de Compras -->
@@ -81,6 +81,17 @@
           <span class="cart-count-badge" style="display: none;">0</span>
         </button>
       </div>
+    </div>
+
+    <!-- Franja deslizable de Categorías para Celulares (Swipe Touch Rápido) -->
+    <div class="mobile-cat-strip" aria-label="Categorías rápidas para móvil">
+      <button class="mobile-cat-pill active" onclick="selectNavCategory('todos')">Todas</button>
+      <button class="mobile-cat-pill" onclick="selectNavCategory('anillos')">Anillos</button>
+      <button class="mobile-cat-pill" onclick="selectNavCategory('collares')">Collares</button>
+      <button class="mobile-cat-pill" onclick="selectNavCategory('aros')">Aros</button>
+      <button class="mobile-cat-pill" onclick="selectNavCategory('pulseras')">Pulseras</button>
+      <button class="mobile-cat-pill" onclick="selectNavCategory('diamantes')">Diamantes</button>
+      <button class="mobile-cat-pill" onclick="selectNavCategory('limitada')">Limitadas</button>
     </div>
   </header>
 
@@ -244,10 +255,10 @@
         </div>
 
         <!-- Colección 6: Edición Limitada -->
-        <div class="collection-bubble-card highlight-celeste" onclick="selectNavCategory('limitada')">
+        <div class="collection-bubble-card highlight-blush" onclick="selectNavCategory('limitada')">
           <div class="collection-img-wrap">
             <img src="https://images.unsplash.com/photo-1603561591411-07134e71a2a9?auto=format&fit=crop&w=600&q=80" alt="Edición Limitada">
-            <span class="collection-pill-badge badge-celeste">Seriadas</span>
+            <span class="collection-pill-badge badge-blush">Seriadas</span>
           </div>
           <div class="collection-info">
             <h3 class="collection-card-name">Edición Limitada</h3>

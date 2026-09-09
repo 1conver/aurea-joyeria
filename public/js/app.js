@@ -191,7 +191,7 @@ function selectNavCategory(catId) {
   renderCategories();
   fetchProducts();
 
-  // Actualizar estado activo en la barra de navegación superior
+  // Actualizar estado activo en la barra de navegación superior (Desktop)
   document.querySelectorAll('.nav-links .nav-item').forEach(item => {
     const fnStr = item.getAttribute('onclick') || '';
     if (fnStr.includes(`'${catId}'`)) {
@@ -200,6 +200,18 @@ function selectNavCategory(catId) {
       item.classList.add('active');
     } else {
       item.classList.remove('active');
+    }
+  });
+
+  // Actualizar estado activo en la franja móvil de categorías (Mobile)
+  document.querySelectorAll('.mobile-cat-strip .mobile-cat-pill').forEach(pill => {
+    const fnStr = pill.getAttribute('onclick') || '';
+    if (fnStr.includes(`'${catId}'`)) {
+      pill.classList.add('active');
+    } else if (catId === 'todos' && fnStr.includes("'todos'")) {
+      pill.classList.add('active');
+    } else {
+      pill.classList.remove('active');
     }
   });
 
@@ -225,7 +237,7 @@ function getBadgeStyleClass(badge) {
     return 'badge-rose';
   }
   if (lower.includes('joyería') || lower.includes('joyeria') || lower.includes('diamante') || lower.includes('nuevo') || lower.includes('exclusivo')) {
-    return 'badge-celeste';
+    return 'badge-blush';
   }
   return 'badge-beige';
 }

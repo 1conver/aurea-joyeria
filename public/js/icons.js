@@ -48,15 +48,15 @@ const ICONS = {
   // Vista Rápida / Ojo
   eye: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" class="icon icon-eye"><path d="2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>`,
 
-  // Logos de medios de pago vectorizados elegantes
-  badgeVisa: `<svg viewBox="0 0 48 32" fill="none" class="badge-brand"><rect width="48" height="32" rx="4" fill="#1A1918"/><path d="M19.2 21h-2.7l1.7-10.5h2.7L19.2 21Zm7.9-10.2c-.5-.2-1.3-.4-2.3-.4-2.5 0-4.3 1.3-4.3 3.3 0 1.4 1.3 2.2 2.2 2.7.9.4 1.3.7 1.3 1.1 0 .6-.7.9-1.4.9-.9 0-1.4-.1-2.2-.5l-.3-.1-.3 2c.6.3 1.6.5 2.7.5 2.6 0 4.4-1.3 4.4-3.3 0-1.1-.7-2-2.3-2.7-.9-.5-1.5-.8-1.5-1.3 0-.4.5-.8 1.5-.8.8 0 1.5.2 1.9.4l.3.1.4-2.2Zm7.6 6.8.9-2.5.5 2.5h-1.4Zm2.7 3.4-2.2-10.5h-2.1c-.6 0-1.2.2-1.4.7l-4 9.8h2.8l.6-1.5h3.4l.3 1.5h2.6Zm-16.1-10.5-2.6 7.2-.3-1.4c-.5-1.7-2.1-3.6-3.8-4.5l2.5 9.2h2.8l4.2-10.5h-2.8Z" fill="#F9F6F0"/></svg>`,
+  // Logos de medios de pago vectorizados elegantes (Paleta Pastel Blanca y Rosa, Cero Negro)
+  badgeVisa: `<svg viewBox="0 0 48 32" fill="none" class="badge-brand"><rect width="48" height="32" rx="4" fill="#FFFFFF" stroke="#F4D3DC" stroke-width="1.2"/><path d="M19.2 21h-2.7l1.7-10.5h2.7L19.2 21Zm7.9-10.2c-.5-.2-1.3-.4-2.3-.4-2.5 0-4.3 1.3-4.3 3.3 0 1.4 1.3 2.2 2.2 2.7.9.4 1.3.7 1.3 1.1 0 .6-.7.9-1.4.9-.9 0-1.4-.1-2.2-.5l-.3-.1-.3 2c.6.3 1.6.5 2.7.5 2.6 0 4.4-1.3 4.4-3.3 0-1.1-.7-2-2.3-2.7-.9-.5-1.5-.8-1.5-1.3 0-.4.5-.8 1.5-.8.8 0 1.5.2 1.9.4l.3.1.4-2.2Zm7.6 6.8.9-2.5.5 2.5h-1.4Zm2.7 3.4-2.2-10.5h-2.1c-.6 0-1.2.2-1.4.7l-4 9.8h2.8l.6-1.5h3.4l.3 1.5h2.6Zm-16.1-10.5-2.6 7.2-.3-1.4c-.5-1.7-2.1-3.6-3.8-4.5l2.5 9.2h2.8l4.2-10.5h-2.8Z" fill="#94384E"/></svg>`,
   
-  badgeMastercard: `<svg viewBox="0 0 48 32" fill="none" class="badge-brand"><rect width="48" height="32" rx="4" fill="#1A1918"/><circle cx="20" cy="16" r="7" fill="#C5A880" fill-opacity="0.85"/><circle cx="28" cy="16" r="7" fill="#D9C3A5" fill-opacity="0.85"/></svg>`,
+  badgeMastercard: `<svg viewBox="0 0 48 32" fill="none" class="badge-brand"><rect width="48" height="32" rx="4" fill="#FFFFFF" stroke="#F4D3DC" stroke-width="1.2"/><circle cx="20" cy="16" r="7" fill="#E27991" fill-opacity="0.85"/><circle cx="28" cy="16" r="7" fill="#C5A47E" fill-opacity="0.85"/></svg>`,
   
-  badgeAmex: `<svg viewBox="0 0 48 32" fill="none" class="badge-brand"><rect width="48" height="32" rx="4" fill="#1A1918"/><text x="24" y="19" font-family="'Plus Jakarta Sans', sans-serif" font-size="7.5" font-weight="700" fill="#E8E1D5" text-anchor="middle" letter-spacing="1">AMEX</text></svg>`,
+  badgeAmex: `<svg viewBox="0 0 48 32" fill="none" class="badge-brand"><rect width="48" height="32" rx="4" fill="#FFFFFF" stroke="#F4D3DC" stroke-width="1.2"/><text x="24" y="19" font-family="'DM Sans', sans-serif" font-size="7.5" font-weight="700" fill="#94384E" text-anchor="middle" letter-spacing="1">AMEX</text></svg>`,
   
   // Medios de pago y badges
-  badgeMercadoPago: `<svg viewBox="0 0 48 32" fill="none" class="badge-brand"><rect width="48" height="32" rx="4" fill="#1A1918"/><path d="M16 17.5c.8-1.8 2.5-3 4.5-3 1.4 0 2.6.6 3.5 1.5.9-.9 2.1-1.5 3.5-1.5 2 0 3.7 1.2 4.5 3" stroke="#C5A880" stroke-width="1.8" stroke-linecap="round"/><circle cx="20" cy="17" r="1.5" fill="#F9F6F0"/><circle cx="28" cy="17" r="1.5" fill="#F9F6F0"/></svg>`,
+  badgeMercadoPago: `<svg viewBox="0 0 48 32" fill="none" class="badge-brand"><rect width="48" height="32" rx="4" fill="#FFFFFF" stroke="#F4D3DC" stroke-width="1.2"/><path d="M16 17.5c.8-1.8 2.5-3 4.5-3 1.4 0 2.6.6 3.5 1.5.9-.9 2.1-1.5 3.5-1.5 2 0 3.7 1.2 4.5 3" stroke="#D4617B" stroke-width="1.8" stroke-linecap="round"/><circle cx="20" cy="17" r="1.5" fill="#94384E"/><circle cx="28" cy="17" r="1.5" fill="#94384E"/></svg>`,
 
   // Iconos de Joyería & Boutique (100% Vectoriales, Cero Emojis)
   diamond: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" class="icon icon-diamond"><path d="M6 3h12l4 6-10 12L2 9z"/><path d="M11 3 8 9l4 12 4-12-3-6"/><path d="M2 9h20"/></svg>`,

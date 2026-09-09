@@ -83,7 +83,7 @@
       <div class="admin-brand">
         <div class="admin-brand-title">ÁUREA</div>
         <span class="user-role-badge" id="header-role-badge">Admin</span>
-        <span style="font-size: 0.8rem; color: #D6CEBE;" id="header-user-name">Cargando...</span>
+        <span style="font-size: 0.8rem; color: var(--text-secondary);" id="header-user-name">Cargando...</span>
       </div>
 
       <div class="admin-actions">
@@ -91,15 +91,15 @@
           <span>Ver Tienda Pública</span>
           <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
         </a>
-        <button class="btn-luxury-outline" style="color: #FAF8F5; border-color: rgba(255,255,255,0.25); padding: 0.45rem 0.9rem; font-size: 0.75rem;" onclick="logout()">
+        <button class="btn-luxury-outline" style="color: var(--pastel-rose-deep); border-color: var(--pastel-rose-border); background: #FFFFFF; padding: 0.45rem 1rem; font-size: 0.75rem; border-radius: var(--radius-full);" onclick="logout()">
           <span>Cerrar Sesión</span>
         </button>
       </div>
     </header>
 
     <!-- Barra Modular de Pestañas / Switch -->
-    <div style="background-color: #1F1D1B; border-bottom: 1px solid rgba(197,168,128,0.2); padding: 0.6rem 2rem;">
-      <div class="container" style="padding: 0; display: flex; align-items: center; justify-content: space-between;">
+    <div class="admin-switch-strip" style="background: linear-gradient(180deg, #FAF0F3 0%, #F5EAEF 100%); border-bottom: 1.5px solid var(--pastel-rose-border); padding: 0.6rem 2rem;">
+      <div class="container" style="padding: 0; display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap;">
         <nav class="admin-module-switch" aria-label="Módulos del panel">
           <button class="admin-tab-btn active" data-tab="orders" onclick="switchModule('orders')">
             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><path d="M15 18H9"/><path d="M19 18h2a1 1 0 0 0 1-1v-5.28a2 2 0 0 0-.59-1.42L18.7 7.59A2 2 0 0 0 17.28 7H14v11h1"/><circle cx="7" cy="18" r="2"/><circle cx="17" cy="18" r="2"/></svg>
@@ -122,8 +122,8 @@
           </button>
         </nav>
 
-        <div style="font-size: 0.72rem; color: #B8B0A2;">
-          Autenticación Bancaria: <span style="color: #4BB543; font-weight: 700;">AUTOMÁTICA (GATEWAY ACTIVO)</span>
+        <div style="font-size: 0.72rem; color: var(--text-secondary);">
+          Autenticación Bancaria: <span style="color: #3E7250; font-weight: 700;">AUTOMÁTICA (GATEWAY ACTIVO)</span>
         </div>
       </div>
     </div>
