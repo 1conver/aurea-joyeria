@@ -10,19 +10,24 @@
   --bg-subtle: #F5EFEB;
   --bg-accent: #EDE5DB;
   
-  /* Tonos Rosa Pastel (Blush / Delicate Rose) */
+  /* Tonos Rosa Pastel Protagónicos (Signature Blush & Berry Rose - Brooki Aesthetic) */
+  --pastel-rose-primary: #D4617B;
+  --pastel-rose-hover: #C24D67;
+  --pastel-rose-deep: #94384E;
   --pastel-rose: #F9E6E9;
   --pastel-rose-bg: #FAF0F3;
-  --pastel-rose-border: #F4D5DC;
-  --pastel-rose-hover: #F2D2D8;
+  --pastel-rose-subtle: #FDF5F7;
+  --pastel-rose-border: #F4D3DC;
   --pastel-rose-accent: #A3485E;
+  --pastel-rose-gradient: linear-gradient(135deg, #E27991, #D4617B);
+  --pastel-rose-gradient-hover: linear-gradient(135deg, #D4617B, #C24D67);
   
   /* Tonos Celeste Pastel (Powder / Soft Sky Blue) */
   --pastel-celeste: #E3EFF3;
-  --pastel-celeste-bg: #F0F6F9;
-  --pastel-celeste-border: #CBE0EB;
+  --pastel-celeste-bg: #EDF5F8;
+  --pastel-celeste-border: #CCE0EB;
   --pastel-celeste-hover: #CFE3EC;
-  --pastel-celeste-accent: #3E6D82;
+  --pastel-celeste-accent: #38687D;
   
   /* Tonos Beige Cálido & Lino */
   --pastel-beige: #F6F1EA;
@@ -31,10 +36,10 @@
   --pastel-beige-hover: #E8DDCF;
   --pastel-beige-accent: #8F6E50;
   
-  /* Tipografía y Contraste Suave */
-  --text-primary: #24201F;
-  --text-secondary: #68605B;
-  --text-muted: #9E958E;
+  /* Tipografía y Contraste Suave (Sin negros duros) */
+  --text-primary: #2D2224;
+  --text-secondary: #6F5E62;
+  --text-muted: #A8989C;
   --text-light: #FAF7F2;
   
   /* Acentos Orfebres Champagne */
@@ -45,7 +50,7 @@
   
   --border-light: #EAE3D8;
   --border-medium: #D8CEBF;
-  --border-dark: #24201F;
+  --border-dark: #6F5E62;
   
   --status-success: #3E7250;
   --status-info: #3E6D82;
@@ -409,29 +414,29 @@ h1, h2, h3, h4, .serif-font {
   justify-content: center;
   gap: 0.75rem;
   padding: 0.95rem 2.2rem;
-  background-color: var(--text-primary);
+  background: var(--pastel-rose-gradient);
   color: #FFFFFF;
   font-size: 0.78rem;
   letter-spacing: 0.16em;
   text-transform: uppercase;
   font-weight: 600;
   border-radius: var(--radius-full);
-  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.3s ease;
-  box-shadow: 0 4px 14px rgba(40, 30, 25, 0.08);
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1), background 0.3s ease;
+  box-shadow: 0 6px 20px rgba(212, 97, 123, 0.28);
   border: 1px solid transparent;
   user-select: none;
 }
 
 .btn-luxury:hover {
-  background-color: var(--pastel-rose-accent);
+  background: var(--pastel-rose-gradient-hover);
   color: #FFFFFF;
   transform: translateY(-3px) scale(1.015);
-  box-shadow: 0 12px 28px rgba(163, 72, 94, 0.3);
+  box-shadow: 0 12px 28px rgba(212, 97, 123, 0.42);
 }
 
 .btn-luxury:active {
   transform: translateY(-1px) scale(0.98);
-  box-shadow: 0 6px 16px rgba(163, 72, 94, 0.2);
+  box-shadow: 0 6px 16px rgba(212, 97, 123, 0.25);
 }
 
 .btn-luxury-outline {
@@ -440,25 +445,26 @@ h1, h2, h3, h4, .serif-font {
   justify-content: center;
   gap: 0.75rem;
   padding: 0.95rem 2.2rem;
-  background-color: rgba(255, 255, 255, 0.85);
+  background-color: #FFFFFF;
   backdrop-filter: blur(8px);
-  color: var(--text-primary);
+  color: var(--pastel-rose-deep);
   font-size: 0.78rem;
   letter-spacing: 0.16em;
   text-transform: uppercase;
   font-weight: 600;
-  border: 1px solid var(--border-medium);
+  border: 1.5px solid var(--pastel-rose-border);
   border-radius: var(--radius-full);
   transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease, background-color 0.3s ease;
   user-select: none;
+  box-shadow: 0 2px 8px rgba(212, 97, 123, 0.05);
 }
 
 .btn-luxury-outline:hover {
-  border-color: var(--pastel-celeste-border);
-  background-color: var(--pastel-celeste-bg);
-  color: var(--pastel-celeste-accent);
+  border-color: var(--pastel-rose-primary);
+  background-color: var(--pastel-rose-bg);
+  color: var(--pastel-rose-primary);
   transform: translateY(-3px) scale(1.015);
-  box-shadow: 0 10px 24px rgba(62, 109, 130, 0.15);
+  box-shadow: 0 10px 24px rgba(212, 97, 123, 0.15);
 }
 
 .btn-luxury-outline:active {
@@ -568,9 +574,64 @@ h1, h2, h3, h4, .serif-font {
   line-height: 1.2;
 }
 
+/* Segunda Cinta Marquee de Valor y Garantías (Estilo Brooki Bakehouse) */
+.brand-perks-marquee {
+  background: #FFFFFF;
+  border-top: 1px solid var(--border-light);
+  border-bottom: 1px solid var(--pastel-rose-border);
+  padding: 1.15rem 0;
+  overflow: hidden;
+  white-space: nowrap;
+  user-select: none;
+  box-shadow: 0 4px 15px rgba(212, 97, 123, 0.04);
+}
+
+.perks-track {
+  display: flex;
+  width: max-content;
+  animation: brookMarqueeReverse 32s linear infinite;
+}
+
+.brand-perks-marquee:hover .perks-track {
+  animation-play-state: paused;
+}
+
+.perks-content {
+  display: flex;
+  align-items: center;
+  gap: 3.5rem;
+  padding-right: 3.5rem;
+  flex-shrink: 0;
+  font-size: 0.76rem;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-weight: 600;
+  color: var(--pastel-rose-deep);
+}
+
+.perks-content span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  transition: color 0.2s ease;
+}
+
+.perks-content span:hover {
+  color: var(--pastel-rose-primary);
+}
+
+@keyframes brookMarqueeReverse {
+  0% {
+    transform: translateX(-50%);
+  }
+  100% {
+    transform: translateX(0%);
+  }
+}
+
 /* Catálogo & Navegación de Categorías */
 .catalog-section {
-  padding: 4.5rem 0 6rem;
+  padding: 5rem 0 6.5rem;
   border-top: 1px solid var(--border-light);
 }
 
@@ -1046,7 +1107,8 @@ h1, h2, h3, h4, .serif-font {
 
 .drawer-header {
   padding: 1.8rem 2rem;
-  border-bottom: 1px solid var(--border-light);
+  border-bottom: 1px solid var(--pastel-rose-border);
+  background: linear-gradient(180deg, #FAF0F3 0%, var(--bg-surface) 100%);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -1177,8 +1239,8 @@ h1, h2, h3, h4, .serif-font {
 
 .drawer-footer {
   padding: 1.8rem 2rem;
-  background-color: var(--bg-main);
-  border-top: 1px solid var(--border-light);
+  background-color: #FAF0F3;
+  border-top: 1px solid var(--pastel-rose-border);
   display: flex;
   flex-direction: column;
   gap: 1.2rem;
@@ -1637,9 +1699,10 @@ h1, h2, h3, h4, .serif-font {
 
 /* Footer Minimalista */
 .site-footer {
-  background-color: var(--text-primary);
-  color: var(--text-light);
+  background: linear-gradient(180deg, #FFFFFF 0%, #FAF0F3 30%, #F7E8ED 100%);
+  color: var(--text-primary);
   padding: 5rem 0 2.5rem;
+  border-top: 1px solid var(--pastel-rose-border);
 }
 
 .footer-grid {
@@ -1651,28 +1714,29 @@ h1, h2, h3, h4, .serif-font {
 
 .footer-brand-title {
   font-family: var(--font-serif);
-  font-size: 1.8rem;
-  letter-spacing: 0.2em;
+  font-size: 1.9rem;
+  letter-spacing: 0.22em;
   text-transform: uppercase;
-  font-weight: 300;
+  font-weight: 500;
+  color: var(--pastel-rose-deep);
   margin-bottom: 0.4rem;
 }
 
 .footer-brand-desc {
   font-size: 0.82rem;
-  color: var(--gold-light);
-  line-height: 1.7;
+  color: var(--text-secondary);
+  line-height: 1.75;
   max-width: 320px;
   margin-bottom: 1.5rem;
-  font-weight: 300;
+  font-weight: 400;
 }
 
 .footer-col-title {
-  font-size: 0.75rem;
-  letter-spacing: 0.18em;
+  font-size: 0.78rem;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: var(--gold-primary);
-  font-weight: 600;
+  color: var(--pastel-rose-deep);
+  font-weight: 700;
   margin-bottom: 1.4rem;
 }
 
@@ -1684,50 +1748,85 @@ h1, h2, h3, h4, .serif-font {
 }
 
 .footer-link {
-  font-size: 0.8rem;
-  color: #BDB7AB;
+  font-size: 0.82rem;
+  color: var(--text-secondary);
   transition: var(--transition-fast);
+  display: inline-block;
 }
 
 .footer-link:hover {
-  color: #FFFFFF;
+  color: var(--pastel-rose-primary);
+  transform: translateX(4px);
 }
 
 .newsletter-form {
   display: flex;
-  border-bottom: 1px solid var(--border-medium);
-  padding-bottom: 0.4rem;
+  align-items: center;
+  background: #FFFFFF;
+  border: 1.5px solid var(--pastel-rose-border);
+  border-radius: var(--radius-full);
+  padding: 0.35rem 0.5rem 0.35rem 1.1rem;
+  box-shadow: 0 4px 15px rgba(212, 97, 123, 0.08);
+  transition: var(--transition-fast);
+}
+
+.newsletter-form:focus-within {
+  border-color: var(--pastel-rose-primary);
+  box-shadow: 0 4px 20px rgba(212, 97, 123, 0.16);
 }
 
 .newsletter-input {
   flex: 1;
-  color: #FFFFFF;
-  font-size: 0.8rem;
+  color: var(--text-primary);
+  font-size: 0.82rem;
+  font-weight: 400;
   outline: none;
+  background: transparent;
+  border: none;
 }
 
 .newsletter-input::placeholder {
-  color: #7E786E;
+  color: var(--text-muted);
 }
 
 .newsletter-btn {
-  color: var(--gold-primary);
-  padding: 0 0.5rem;
-  transition: var(--transition-fast);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--pastel-rose-gradient);
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition-bounce);
+  box-shadow: 0 2px 8px rgba(212, 97, 123, 0.3);
+  border: none;
+  cursor: pointer;
 }
 
 .newsletter-btn:hover {
+  transform: scale(1.08);
+  box-shadow: 0 4px 12px rgba(212, 97, 123, 0.45);
   color: #FFFFFF;
 }
 
 .footer-bottom {
   padding-top: 2rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-top: 1px solid var(--pastel-rose-border);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  font-size: 0.72rem;
-  color: #8C867B;
+  font-size: 0.76rem;
+  color: var(--text-secondary);
+}
+
+.footer-bottom a {
+  color: var(--pastel-rose-deep);
+  transition: var(--transition-fast);
+}
+
+.footer-bottom a:hover {
+  color: var(--pastel-rose-primary);
 }
 
 .footer-payments-bar {
