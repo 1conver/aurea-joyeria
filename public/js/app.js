@@ -179,6 +179,19 @@ function updateCounter() {
   }
 }
 
+// Helper para asignar variantes cromáticas pastel según el tipo de insignia
+function getBadgeStyleClass(badge) {
+  if (!badge) return '';
+  const lower = badge.toLowerCase();
+  if (lower.includes('best') || lower.includes('vendido') || lower.includes('off') || lower.includes('descuento') || lower.includes('promo')) {
+    return 'badge-rose';
+  }
+  if (lower.includes('joyería') || lower.includes('joyeria') || lower.includes('diamante') || lower.includes('nuevo') || lower.includes('exclusivo')) {
+    return 'badge-celeste';
+  }
+  return 'badge-beige';
+}
+
 function renderProducts() {
   const gridEl = document.getElementById('products-grid');
   if (!gridEl) return;
@@ -206,10 +219,11 @@ function renderProducts() {
 
   gridEl.innerHTML = AppState.filteredProducts.map(product => {
     const cuota3 = Math.round(product.price / 3);
+    const badgeClass = getBadgeStyleClass(product.badge);
     return `
       <article class="product-card" data-product-id="${product.id}">
         <div class="product-media">
-          ${product.badge ? `<span class="card-badge">${product.badge}</span>` : ''}
+          ${product.badge ? `<span class="card-badge ${badgeClass}">${product.badge}</span>` : ''}
           <img src="${product.primary_image}" alt="${product.name}" class="product-img img-primary" loading="lazy">
           <img src="${product.secondary_image || product.primary_image}" alt="${product.name} en detalle" class="product-img img-secondary" loading="lazy">
           

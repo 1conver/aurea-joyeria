@@ -1,0 +1,392 @@
+================================================================================
+           ÁUREA ATELIER JOAILLERIE - DOCUMENTO COMPLETO DEL PROYECTO
+================================================================================
+Fecha: 09/09/2026
+Ubicación local en tu PC: C:\Users\Aco\.gemini\antigravity-ide\scratch\aurea-joyeria
+Repositorio oficial GitHub: https://github.com/1conver/aurea-joyeria
+Despliegue Vercel: https://vercel.com/new/clone?repository-url=https://github.com/1conver/aurea-joyeria
+================================================================================
+
+1. RESUMEN DEL PROYECTO
+--------------------------------------------------------------------------------
+ÁUREA Atelier es una plataforma e-commerce de joyería de alta gama contemporánea
+diseñada con una estética minimalista, sobria y editorial, 100% libre de emojis
+(utiliza únicamente iconos vectoriales SVG de trazo fino) y adaptada a la 
+República Argentina:
+  - Catálogo interactivo de orfebrería (Anillos, Collares, Aros, Pulseras y Alta Joyería).
+  - Precios en Pesos Argentinos (ARS $) con cálculo automático de 3 y 6 cuotas.
+  - Pasarela de cobros: Mercado Pago, Tarjetas de Crédito directas (Visa, Mastercard, 
+    American Express) y Transferencia Bancaria con 15% OFF (Alias / CBU).
+  - Autenticación automática de cobros en la API (Gateway) para tarjetas y Mercado Pago.
+  - Panel de control modular (/admin) con control de acceso por roles:
+      * Administrador General: Control total (Catálogo, Precios, Ofertas, Banners y Personal).
+      * Operario de Taller: Enfocado en pedidos, preparación de medidas y despacho Andreani.
+
+
+2. CREDENCIALES DE ACCESO AL PANEL (/admin)
+--------------------------------------------------------------------------------
+Panel local: http://localhost:3000/admin
+
+A) DIRECTOR GENERAL (ADMINISTRADOR)
+   - Correo: admin@aurea-joyeria.com
+   - Contraseña: aurea2026
+   - Permisos: Acceso total a los 4 módulos (Taller, Catálogo, Ofertas y Cuentas).
+
+B) MAESTRO ORFEBRE (OPERARIO)
+   - Correo: taller@aurea-joyeria.com
+   - Contraseña: taller123
+   - Permisos: Acceso exclusivo a Taller, Ajuste de Medidas y Despachos Andreani.
+
+
+3. ESTRUCTURA DE ARCHIVOS EN TU PC
+--------------------------------------------------------------------------------
+C:\Users\Aco\.gemini\antigravity-ide\scratch\aurea-joyeria\
+├── server.py                 (Servidor backend local en Python / aiohttp)
+├── vercel.json               (Configuración de enrutamiento y Serverless Functions para Vercel)
+├── README.md                 (Documentación oficial de instalación y uso)
+├── .env.example              (Plantilla de variables de entorno para Mercado Pago)
+├── .gitignore                (Reglas de exclusión para Git)
+├── api/
+│   └── index.py              (Función Serverless en Python para despliegue en Vercel)
+├── data/
+│   ├── products.json         (Base de datos del catálogo de joyas, fotos y especificaciones)
+│   ├── orders.json           (Base de datos de compras, cobros y guías de Andreani)
+│   ├── users.json            (Base de datos de usuarios, operarios y administradores)
+│   └── settings.json         (Configuración dinámica de ofertas, cintillo y textos)
+└── public/
+    ├── index.html            (Tienda pública principal para clientes)
+    ├── admin.html            (Panel de control modular y login para operarios)
+    ├── css/
+    │   └── styles.css        (Sistema de diseño minimalista, tipografía y modales)
+    └── js/
+        ├── app.js            (Lógica de la tienda: catálogo, carrito y checkout)
+        ├── admin.js          (Lógica del panel: login, roles, catálogo y logística)
+        └── icons.js          (Sistema de iconografía vectorial SVG sin emojis)
+
+
+4. CÓDIGO FUENTE DE LOS COMPONENTES PRINCIPALES
+--------------------------------------------------------------------------------
+
+================================================================================
+ARCHIVO: public/index.html (Tienda Pública)
+================================================================================
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ÁUREA Atelier | Joyería Minimalista & Orfebrería Fina</title>
+  <meta name="description" content="Joyería de autor contemporánea y minimalista en oro 18k y plata 925. Diseños atemporales hechos a mano en Buenos Aires. Hasta 6 cuotas y envíos asegurados a toda la Argentina.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+  <div class="top-ticker">
+    <div class="ticker-content">
+      <span>Envíos asegurados a todo el país vía Andreani</span>
+      <span class="ticker-sep">/</span>
+      <span>3 y 6 Cuotas Sin Interés con Tarjetas Bancarias</span>
+      <span class="ticker-sep">/</span>
+      <span class="ticker-item-secondary">15% OFF abonando por Transferencia</span>
+    </div>
+  </div>
+
+  <header class="site-header">
+    <div class="container header-inner">
+      <nav class="nav-links" aria-label="Navegación principal">
+        <a href="#catalogo" class="nav-item active">Colección</a>
+        <a href="#catalogo" class="nav-item" onclick="AppState.activeCategory='anillos'; fetchProducts();">Anillos</a>
+        <a href="#catalogo" class="nav-item" onclick="AppState.activeCategory='collares'; fetchProducts();">Collares</a>
+        <a href="#catalogo" class="nav-item" onclick="AppState.activeCategory='aros'; fetchProducts();">Aros</a>
+        <a href="#atelier" class="nav-item">Atelier</a>
+      </nav>
+
+      <a href="/" class="brand-logo" aria-label="ÁUREA Atelier Inicio">
+        <div class="brand-title">ÁUREA</div>
+        <div class="brand-subtitle">Atelier Joaillerie · Buenos Aires</div>
+      </a>
+
+      <div class="header-actions">
+        <div style="display: flex; align-items: center; background: var(--bg-subtle); padding: 0.35rem 0.8rem; border-radius: var(--radius-full); border: 1px solid var(--border-light);">
+          <span style="color: var(--text-muted); display: flex; align-items: center; margin-right: 0.4rem;" data-icon="search"></span>
+          <input type="text" id="header-search-input" placeholder="Buscar por pieza o metal..." style="font-size: 0.78rem; width: 160px; outline: none;">
+        </div>
+
+        <button class="header-btn btn-open-cart" aria-label="Abrir bolsa de compras">
+          <span data-icon="bag"></span>
+          <span class="cart-count-badge" style="display: none;">0</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="container hero-grid">
+      <div class="hero-content">
+        <div class="hero-tag">Colección Contemporánea 2026</div>
+        <h1 class="hero-title">La sutileza de lo <em>eterno</em></h1>
+        <p class="hero-desc">
+          Piezas forjadas a mano en oro macizo de 18 quilates y plata de ley 925. Siluetas escultóricas depuradas y diamantes éticos concebidos para convivir con la piel a lo largo del tiempo.
+        </p>
+
+        <div class="hero-actions">
+          <a href="#catalogo" class="btn-luxury">
+            <span>Explorar Catálogo</span>
+            <span data-icon="arrowRight"></span>
+          </a>
+          <a href="#atelier" class="btn-luxury-outline">
+            <span>El Atelier</span>
+          </a>
+        </div>
+
+        <div class="hero-features">
+          <div class="feature-item">
+            <span class="feature-title">
+              <span data-icon="certificate" class="icon-sm"></span>
+              Metales Certificados
+            </span>
+            <span class="feature-sub">Oro 18K y Plata 925 puros y trazables</span>
+          </div>
+
+          <div class="feature-item">
+            <span class="feature-title">
+              <span data-icon="creditCard" class="icon-sm"></span>
+              Financiación Local
+            </span>
+            <span class="feature-sub">Hasta 6 cuotas fijas y Mercado Pago</span>
+          </div>
+
+          <div class="feature-item">
+            <span class="feature-title">
+              <span data-icon="shipping" class="icon-sm"></span>
+              Custodia Asegurada
+            </span>
+            <span class="feature-sub">Envíos puerta a puerta en toda Argentina</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-media">
+        <div class="hero-img-card">
+          <img src="https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?auto=format&fit=crop&w=1200&q=85" alt="Gargantilla de Alta Joyería en Oro Blanco">
+          <div class="hero-floating-badge">
+            <div class="badge-label">Pieza de Autor</div>
+            <div class="badge-val">Gargantilla Étoile con Diamante Cultivado</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Catálogo -->
+  <section class="catalog-section" id="catalogo">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-subtitle">Obras de Orfebrería</div>
+        <h2 class="section-title">Nuestras Creaciones</h2>
+      </div>
+
+      <div class="category-filter-bar" id="category-filter-bar"></div>
+
+      <div class="filter-toolbar">
+        <div class="filter-group">
+          <div class="filter-item">
+            <span style="font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted);">Metal:</span>
+            <select id="metal-filter" class="select-minimal">
+              <option value="todos">Todos los metales</option>
+              <option value="oro">Oro Amarillo 18K</option>
+              <option value="oro-blanco">Oro Blanco 18K</option>
+              <option value="plata">Plata 925</option>
+            </select>
+          </div>
+
+          <div class="filter-item">
+            <span style="font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted);">Ordenar:</span>
+            <select id="sort-order" class="select-minimal">
+              <option value="featured">Destacados de la colección</option>
+              <option value="price-asc">Menor a mayor precio</option>
+              <option value="price-desc">Mayor a menor precio</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="catalog-counter" id="catalog-count">Cargando piezas...</div>
+      </div>
+
+      <div class="products-grid" id="products-grid"></div>
+    </div>
+  </section>
+
+  <!-- Atelier Manifiesto -->
+  <section class="atelier-story-section" id="atelier">
+    <div class="container story-grid">
+      <div class="story-img-wrap">
+        <img src="https://images.unsplash.com/photo-1573408301185-9146fe634ad0?auto=format&fit=crop&w=1200&q=85" alt="Taller de Joyería Artesanal">
+      </div>
+
+      <div class="story-content">
+        <span class="hero-tag">Herencia & Precisión</span>
+        <h2 class="story-title">El rigor del oficio contemporáneo</h2>
+        <p class="story-p">
+          En ÁUREA entendemos el lujo desde la sobriedad. Cada una de nuestras piezas es ideada y forjada de manera unitaria en nuestro taller del barrio de Recoleta, Buenos Aires. Prescindimos del artificio para ensalzar la pureza de la materia noble.
+        </p>
+
+        <div class="story-pillars">
+          <div class="pillar-card">
+            <div class="pillar-name">Oro 18K Macizo</div>
+            <div class="pillar-desc">Aleaciones nobles de primera ley sin baños superficiales perecederos.</div>
+          </div>
+          <div class="pillar-card">
+            <div class="pillar-name">Gemas Éticas</div>
+            <div class="pillar-desc">Diamantes cultivados con huella neutra y pureza garantizada VVS.</div>
+          </div>
+          <div class="pillar-card">
+            <div class="pillar-name">Hecho en Argentina</div>
+            <div class="pillar-desc">Impulso a la artesanía local con mano de obra orfebre calificada.</div>
+          </div>
+          <div class="pillar-card">
+            <div class="pillar-name">Garantía Perpetua</div>
+            <div class="pillar-desc">Servicio anual gratuito de limpieza y pulido para cada cliente.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <div class="footer-brand-title">ÁUREA</div>
+          <p class="footer-brand-desc">
+            Joyería minimalista de diseño y alta factura orfebre. Diseñada y manufacturada en la Ciudad Autónoma de Buenos Aires.
+          </p>
+          <div style="font-size: 0.75rem; color: #8C867B;">
+            Atelier: Av. Alvear 1850, Recoleta, CABA.<br>
+            Atención personalizada con cita previa.
+          </div>
+        </div>
+
+        <div>
+          <div class="footer-col-title">Colecciones</div>
+          <ul class="footer-links">
+            <li><a href="#catalogo" class="footer-link">Anillos de Autor</a></li>
+            <li><a href="#catalogo" class="footer-link">Collares & Gargantillas</a></li>
+            <li><a href="#catalogo" class="footer-link">Aros Criollos & Esculturas</a></li>
+            <li><a href="#catalogo" class="footer-link">Pulseras & Rivières</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <div class="footer-col-title">Servicio & Cuidados</div>
+          <ul class="footer-links">
+            <li><a href="#catalogo" class="footer-link">Guía Oficial de Talles</a></li>
+            <li><a href="#catalogo" class="footer-link">Cuidados de Metales Nobles</a></li>
+            <li><a href="#catalogo" class="footer-link">Política de Envíos Nacionales</a></li>
+            <li><a href="#catalogo" class="footer-link">Certificados de Autenticidad</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <div class="footer-col-title">Boletín del Atelier</div>
+          <p style="font-size: 0.78rem; color: #BDB7AB; margin-bottom: 1.2rem;">
+            Accedé a lanzamientos de edición limitada y visitas privadas al taller.
+          </p>
+          <form class="newsletter-form" id="newsletter-form">
+            <input type="email" id="newsletter-email" class="newsletter-input" placeholder="Tu correo electrónico" required>
+            <button type="submit" class="newsletter-btn" aria-label="Suscribirse">
+              <span data-icon="arrowRight"></span>
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div>
+          © 2026 ÁUREA Atelier Joaillerie S.A. CUIT: 30-71829341-8. Todos los derechos reservados.
+          <a href="/admin" target="_blank" style="margin-left: 1.2rem; color: #BDB7AB; text-decoration: underline; font-size: 0.7rem;">Panel de Operarios</a>
+        </div>
+        <div class="footer-payments-bar">
+          <span style="font-size: 0.7rem; color: #8C867B; margin-right: 0.5rem;">Medios de Pago:</span>
+          <span data-icon="badgeMercadoPago"></span>
+          <span data-icon="badgeVisa"></span>
+          <span data-icon="badgeMastercard"></span>
+          <span data-icon="badgeAmex"></span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <div class="modal-overlay" id="drawer-overlay"></div>
+  <div class="modal-overlay" id="quickview-modal-overlay"><div id="quickview-modal-content"></div></div>
+  <div class="modal-overlay" id="checkout-modal-overlay"><div id="checkout-modal-content"></div></div>
+
+  <aside class="cart-drawer" id="cart-drawer" aria-label="Bolsa de compras">
+    <div class="drawer-header">
+      <h3 class="drawer-title">Bolsa de Compras</h3>
+      <button class="btn-close-drawer" id="btn-close-cart" aria-label="Cerrar bolsa">
+        <span data-icon="close"></span>
+      </button>
+    </div>
+    <div class="cart-items-body" id="cart-items-body"></div>
+    <div class="drawer-footer" id="cart-drawer-footer">
+      <div class="cuotas-announcement" id="cart-cuotas-text">Hasta 3 cuotas sin interés en Pesos Argentinos</div>
+      <div class="cart-summary-row"><span>Subtotal:</span><strong id="cart-subtotal-val">$0</strong></div>
+      <div class="cart-summary-row"><span>Envío a Domicilio:</span><span style="color: var(--status-success); font-weight: 600;">Gratis</span></div>
+      <div class="cart-summary-row total"><span>Total:</span><span id="cart-total-val">$0</span></div>
+      <button class="btn-luxury" style="width: 100%;" id="btn-proceed-checkout">
+        <span data-icon="lock"></span>
+        <span>Iniciar Pago Seguro</span>
+      </button>
+    </div>
+  </aside>
+
+  <script src="/js/icons.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+</html>
+
+
+================================================================================
+ARCHIVO: vercel.json (Enrutamiento en Producción)
+================================================================================
+{
+  "version": 2,
+  "rewrites": [
+    {
+      "source": "/admin",
+      "destination": "/admin.html"
+    },
+    {
+      "source": "/api/(.*)",
+      "destination": "/api/index.py"
+    }
+  ]
+}
+
+
+================================================================================
+ARCHIVO: api/index.py (Serverless Function Python para Vercel)
+================================================================================
+(El código completo de la API en Python estándar con autenticación, catálogo,
+pedidos, cobros automáticos con tarjetas y Mercado Pago, y configuración).
+Ver archivo local: C:\Users\Aco\.gemini\antigravity-ide\scratch\aurea-joyeria\api\index.py
+
+
+================================================================================
+5. CÓMO EJECUTAR LOCALMENTE
+================================================================================
+1. Abrir PowerShell en Windows
+2. Ejecutar:
+   cd C:\Users\Aco\.gemini\antigravity-ide\scratch\aurea-joyeria
+   python server.py
+3. Ingresar a:
+   - Tienda: http://localhost:3000
+   - Panel de Operarios y Admin: http://localhost:3000/admin
+
+================================================================================
+FIN DEL ARCHIVO
+================================================================================
