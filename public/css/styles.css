@@ -57,8 +57,8 @@
   --status-danger: #A3485E;
   --status-warning: #A17638;
 
-  /* Tipografías Oficiales (Brooki Bakehouse Style) */
-  --font-serif: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+  /* Tipografías Oficiales (Brooki Bakehouse Style - 100% DM Sans Sin Cursivas) */
+  --font-serif: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-sans: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   
   /* Sombras suaves y transiciones */
@@ -130,11 +130,12 @@ a {
   padding: 0 2rem;
 }
 
-/* Tipografía jerarquizada */
+/* Tipografía jerarquizada estilo Brooki Bakehouse (100% Sans-Serif Limpia y Rotunda) */
 h1, h2, h3, h4, .serif-font {
-  font-family: var(--font-serif);
-  font-weight: 400;
-  letter-spacing: -0.01em;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
 }
 
 /* Iconos SVG */
@@ -276,14 +277,14 @@ h1, h2, h3, h4, .serif-font {
 }
 
 .brand-title {
-  font-family: var(--font-serif);
-  font-size: 2.1rem;
-  letter-spacing: 0.22em;
+  font-family: var(--font-sans);
+  font-size: 1.95rem;
+  letter-spacing: 0.28em;
   text-transform: uppercase;
-  font-weight: 300;
+  font-weight: 800;
   color: var(--text-primary);
   line-height: 1;
-  margin-bottom: 2px;
+  margin-bottom: 3px;
 }
 
 .brand-subtitle {
@@ -379,18 +380,25 @@ h1, h2, h3, h4, .serif-font {
 }
 
 .hero-title {
-  font-size: 4rem;
-  line-height: 1.08;
-  letter-spacing: -0.02em;
+  font-family: var(--font-sans);
+  font-size: 3.8rem;
+  line-height: 1.1;
+  letter-spacing: -0.025em;
   color: var(--text-primary);
   margin-bottom: 1.6rem;
-  font-weight: 300;
+  font-weight: 700;
 }
 
 .hero-title em {
-  font-style: italic;
-  font-family: var(--font-serif);
-  color: var(--pastel-rose-accent);
+  font-style: normal;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  color: var(--pastel-rose-primary);
+  background: linear-gradient(135deg, rgba(212, 97, 123, 0.1), rgba(244, 211, 220, 0.35));
+  padding: 0.05em 0.3em;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--pastel-rose-border);
+  display: inline-block;
 }
 
 .hero-desc {
@@ -627,6 +635,151 @@ h1, h2, h3, h4, .serif-font {
   100% {
     transform: translateX(0%);
   }
+}
+
+/* ==========================================================================
+   Sección Explorar por Colección (Shop by Category - Estilo Brooki Bakehouse)
+   ========================================================================== */
+.featured-collections-section {
+  padding: 4.5rem 0 3.5rem;
+  background: linear-gradient(180deg, var(--bg-main) 0%, rgba(250, 240, 243, 0.5) 50%, var(--bg-main) 100%);
+  border-top: 1px solid var(--pastel-rose-border);
+}
+
+.collections-carousel-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 1.4rem;
+}
+
+@media (max-width: 1100px) {
+  .collections-carousel-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.2rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .collections-carousel-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+}
+
+.collection-bubble-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  background: #FFFFFF;
+  border-radius: var(--radius-md);
+  padding: 1rem 0.85rem 1.2rem;
+  border: 1.5px solid var(--pastel-rose-border);
+  box-shadow: 0 4px 15px rgba(212, 97, 123, 0.05);
+  cursor: pointer;
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s ease;
+  user-select: none;
+}
+
+.collection-bubble-card:hover {
+  transform: translateY(-8px) scale(1.02);
+  border-color: var(--pastel-rose-primary);
+  box-shadow: 0 14px 30px rgba(212, 97, 123, 0.18);
+}
+
+.collection-img-wrap {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border-radius: calc(var(--radius-md) - 4px);
+  overflow: hidden;
+  position: relative;
+  background: var(--pastel-rose-bg);
+  margin-bottom: 0.85rem;
+}
+
+.collection-img-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.collection-bubble-card:hover .collection-img-wrap img {
+  transform: scale(1.08);
+}
+
+.collection-pill-badge {
+  position: absolute;
+  bottom: 0.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(6px);
+  border: 1px solid var(--pastel-rose-border);
+  color: var(--pastel-rose-deep);
+  font-size: 0.62rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-weight: 700;
+  padding: 0.25rem 0.65rem;
+  border-radius: var(--radius-full);
+  white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  transition: var(--transition-fast);
+}
+
+.collection-bubble-card:hover .collection-pill-badge {
+  background: var(--pastel-rose-primary);
+  color: #FFFFFF;
+  border-color: var(--pastel-rose-primary);
+}
+
+.collection-pill-badge.badge-rose {
+  background: rgba(250, 240, 243, 0.95);
+  color: var(--pastel-rose-primary);
+  border-color: var(--pastel-rose-border);
+}
+
+.collection-pill-badge.badge-celeste {
+  background: rgba(237, 245, 248, 0.95);
+  color: var(--pastel-celeste-accent);
+  border-color: var(--pastel-celeste-border);
+}
+
+.collection-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  width: 100%;
+}
+
+.collection-card-name {
+  font-family: var(--font-sans);
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.01em;
+  transition: var(--transition-fast);
+}
+
+.collection-bubble-card:hover .collection-card-name {
+  color: var(--pastel-rose-primary);
+}
+
+.collection-count-hint {
+  font-size: 0.72rem;
+  color: var(--text-secondary);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3rem;
+  font-weight: 500;
+  transition: var(--transition-fast);
+}
+
+.collection-bubble-card:hover .collection-count-hint {
+  color: var(--pastel-rose-primary);
+  transform: translateX(2px);
 }
 
 /* Catálogo & Navegación de Categorías */

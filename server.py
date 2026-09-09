@@ -307,8 +307,10 @@ async def handle_get_products(request):
     query = request.query.get("q", "").strip().lower()
     
     if category != "todos":
-        if category == "alta-joyeria":
-            products = [p for p in products if p.get("badge") == "Alta Joyería" or p.get("price", 0) >= 400000]
+        if category in ("alta-joyeria", "diamantes"):
+            products = [p for p in products if p.get("category") == "diamantes" or p.get("badge") == "Alta Joyería" or "diamante" in p.get("name", "").lower() or p.get("price", 0) >= 400000]
+        elif category == "limitada":
+            products = [p for p in products if p.get("category") == "limitada" or p.get("badge") == "Edición Limitada"]
         else:
             products = [p for p in products if p.get("category") == category]
             
@@ -356,7 +358,8 @@ async def handle_get_categories(request):
         {"id": "collares", "label": "Collares", "count": len([p for p in products if p.get("category") == "collares"])},
         {"id": "aros", "label": "Aros", "count": len([p for p in products if p.get("category") == "aros"])},
         {"id": "pulseras", "label": "Pulseras", "count": len([p for p in products if p.get("category") == "pulseras"])},
-        {"id": "alta-joyeria", "label": "Alta Joyería", "count": len([p for p in products if p.get("badge") == "Alta Joyería" or p.get("price", 0) >= 400000])}
+        {"id": "diamantes", "label": "Alta Joyería & Diamantes", "count": len([p for p in products if p.get("category") == "diamantes" or "diamante" in p.get("name", "").lower() or p.get("badge") == "Alta Joyería"])},
+        {"id": "limitada", "label": "Edición Limitada", "count": len([p for p in products if p.get("category") == "limitada" or p.get("badge") == "Edición Limitada"])}
     ]
     return web.json_response({"success": True, "categories": categories})
 

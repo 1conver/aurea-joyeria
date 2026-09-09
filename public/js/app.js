@@ -51,9 +51,10 @@ async function fetchStoreSettings() {
       const tickerEls = document.querySelectorAll('.ticker-content');
       if (tickerEls.length > 0 && s.ticker_text) {
         const parts = s.ticker_text.split('/');
+        const sparkleIcon = (window.ICONS && window.ICONS.sparkle) ? window.ICONS.sparkle : '';
         const html = parts.map((p) => `
           <span>${p.trim()}</span>
-          <span class="ticker-sep">✦</span>
+          <span class="ticker-sep">${sparkleIcon}</span>
         `).join('');
         tickerEls.forEach(el => el.innerHTML = html);
       }
@@ -180,11 +181,32 @@ function renderCategories() {
   barEl.querySelectorAll('.cat-btn').forEach(btn => {
     btn.addEventListener('click', (e) => {
       const targetCat = btn.getAttribute('data-category');
-      AppState.activeCategory = targetCat;
-      renderCategories();
-      fetchProducts();
+      selectNavCategory(targetCat);
     });
   });
+}
+
+function selectNavCategory(catId) {
+  AppState.activeCategory = catId;
+  renderCategories();
+  fetchProducts();
+
+  // Actualizar estado activo en la barra de navegación superior
+  document.querySelectorAll('.nav-links .nav-item').forEach(item => {
+    const fnStr = item.getAttribute('onclick') || '';
+    if (fnStr.includes(`'${catId}'`)) {
+      item.classList.add('active');
+    } else if (catId === 'todos' && fnStr.includes("'todos'")) {
+      item.classList.add('active');
+    } else {
+      item.classList.remove('active');
+    }
+  });
+
+  const catalogEl = document.getElementById('catalogo');
+  if (catalogEl) {
+    catalogEl.scrollIntoView({ behavior: 'smooth' });
+  }
 }
 
 function updateCounter() {
@@ -1209,3 +1231,4 @@ window.updateCartQuantity = updateCartQuantity;
 window.removeCartItem = removeCartItem;
 window.copyToClipboard = copyToClipboard;
 window.closeCheckoutModal = closeCheckoutModal;
+window.selectNavCategory = selectNavCategory;

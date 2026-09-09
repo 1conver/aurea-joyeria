@@ -77,8 +77,10 @@ class handler(BaseHTTPRequestHandler):
             q = qs.get("q", [""])[0].lower()
 
             if category != "todos":
-                if category == "alta-joyeria":
-                    products = [p for p in products if p.get("badge") == "Alta Joyería" or p.get("price", 0) >= 400000]
+                if category in ("alta-joyeria", "diamantes"):
+                    products = [p for p in products if p.get("category") == "diamantes" or p.get("badge") == "Alta Joyería" or "diamante" in p.get("name", "").lower() or p.get("price", 0) >= 400000]
+                elif category == "limitada":
+                    products = [p for p in products if p.get("category") == "limitada" or p.get("badge") == "Edición Limitada"]
                 else:
                     products = [p for p in products if p.get("category") == category]
 
@@ -106,7 +108,8 @@ class handler(BaseHTTPRequestHandler):
                 {"id": "collares", "label": "Collares", "count": len([p for p in products if p.get("category") == "collares"])},
                 {"id": "aros", "label": "Aros", "count": len([p for p in products if p.get("category") == "aros"])},
                 {"id": "pulseras", "label": "Pulseras", "count": len([p for p in products if p.get("category") == "pulseras"])},
-                {"id": "alta-joyeria", "label": "Alta Joyería", "count": len([p for p in products if p.get("badge") == "Alta Joyería" or p.get("price", 0) >= 400000])}
+                {"id": "diamantes", "label": "Alta Joyería & Diamantes", "count": len([p for p in products if p.get("category") == "diamantes" or "diamante" in p.get("name", "").lower() or p.get("badge") == "Alta Joyería"])},
+                {"id": "limitada", "label": "Edición Limitada", "count": len([p for p in products if p.get("category") == "limitada" or p.get("badge") == "Edición Limitada"])}
             ]
             self._set_headers(200)
             self.wfile.write(json.dumps({"success": True, "categories": categories}).encode('utf-8'))

@@ -6,42 +6,42 @@
   <title>ÁUREA Atelier | Joyería Minimalista & Orfebrería Fina</title>
   <meta name="description" content="Joyería de autor contemporánea y minimalista en oro 18k y plata 925. Diseños atemporales hechos a mano en Buenos Aires. Hasta 6 cuotas y envíos asegurados a toda la Argentina.">
 
-  <!-- Tipografías de Alta Gama Oficiales (Brooki Bakehouse DM Sans + Cormorant Garamond) -->
+  <!-- Tipografía Oficial (Brooki Bakehouse Style - 100% DM Sans) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet">
 
   <!-- Estilos del Proyecto -->
   <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body>
 
-  <!-- Cintillo Superior Animado en Bucle Continuo (Marquee estilo Brooki Bakehouse) -->
+  <!-- Cintillo Superior Animado en Bucle Continuo (Marquee estilo Brooki Bakehouse - 100% Vectorial, Cero Emojis) -->
   <div class="top-ticker" aria-label="Anuncios destacados">
     <div class="ticker-track">
       <div class="ticker-content">
         <span>Envíos asegurados a todo el país vía Andreani</span>
-        <span class="ticker-sep">✦</span>
+        <span class="ticker-sep" data-icon="sparkle"></span>
         <span>3 y 6 Cuotas Sin Interés con Tarjetas Bancarias</span>
-        <span class="ticker-sep">✦</span>
+        <span class="ticker-sep" data-icon="sparkle"></span>
         <span class="ticker-item-secondary">15% OFF abonando por Transferencia</span>
-        <span class="ticker-sep">✦</span>
+        <span class="ticker-sep" data-icon="sparkle"></span>
         <span>Joyería Fina en Oro 18K & Gemas Éticas</span>
-        <span class="ticker-sep">✦</span>
+        <span class="ticker-sep" data-icon="sparkle"></span>
         <span>Atelier Abierto en Recoleta, Buenos Aires</span>
-        <span class="ticker-sep">✦</span>
+        <span class="ticker-sep" data-icon="sparkle"></span>
       </div>
       <div class="ticker-content" aria-hidden="true">
         <span>Envíos asegurados a todo el país vía Andreani</span>
-        <span class="ticker-sep">✦</span>
+        <span class="ticker-sep" data-icon="sparkle"></span>
         <span>3 y 6 Cuotas Sin Interés con Tarjetas Bancarias</span>
-        <span class="ticker-sep">✦</span>
+        <span class="ticker-sep" data-icon="sparkle"></span>
         <span class="ticker-item-secondary">15% OFF abonando por Transferencia</span>
-        <span class="ticker-sep">✦</span>
+        <span class="ticker-sep" data-icon="sparkle"></span>
         <span>Joyería Fina en Oro 18K & Gemas Éticas</span>
-        <span class="ticker-sep">✦</span>
+        <span class="ticker-sep" data-icon="sparkle"></span>
         <span>Atelier Abierto en Recoleta, Buenos Aires</span>
-        <span class="ticker-sep">✦</span>
+        <span class="ticker-sep" data-icon="sparkle"></span>
       </div>
     </div>
   </div>
@@ -49,12 +49,15 @@
   <!-- Cabecera Principal -->
   <header class="site-header">
     <div class="container header-inner">
-      <!-- Navegación Primaria -->
+      <!-- Navegación Primaria Ampliada -->
       <nav class="nav-links" aria-label="Navegación principal">
-        <a href="#catalogo" class="nav-item active">Colección</a>
-        <a href="#catalogo" class="nav-item" onclick="AppState.activeCategory='anillos'; fetchProducts();">Anillos</a>
-        <a href="#catalogo" class="nav-item" onclick="AppState.activeCategory='collares'; fetchProducts();">Collares</a>
-        <a href="#catalogo" class="nav-item" onclick="AppState.activeCategory='aros'; fetchProducts();">Aros</a>
+        <a href="#catalogo" class="nav-item active" onclick="selectNavCategory('todos')">Colección</a>
+        <a href="#catalogo" class="nav-item" onclick="selectNavCategory('anillos')">Anillos</a>
+        <a href="#catalogo" class="nav-item" onclick="selectNavCategory('collares')">Collares</a>
+        <a href="#catalogo" class="nav-item" onclick="selectNavCategory('aros')">Aros</a>
+        <a href="#catalogo" class="nav-item" onclick="selectNavCategory('pulseras')">Pulseras</a>
+        <a href="#catalogo" class="nav-item" onclick="selectNavCategory('diamantes')">Diamantes</a>
+        <a href="#catalogo" class="nav-item" onclick="selectNavCategory('limitada')">Limitadas</a>
         <a href="#atelier" class="nav-item">Atelier</a>
       </nav>
 
@@ -141,35 +144,119 @@
     </div>
   </section>
 
-  <!-- Cinta Divisoria de Beneficios / Brand Perks Marquee (Estilo Brooki Bakehouse) -->
+  <!-- Cinta Divisoria de Beneficios / Brand Perks Marquee (Estilo Brooki Bakehouse - 100% Vectorial, Cero Emojis) -->
   <div class="brand-perks-marquee" aria-label="Ventajas y Compromiso Áurea">
     <div class="perks-track">
       <div class="perks-content">
-        <span class="perk-pill"><span class="perk-icon">✦</span> Envío Gratis a Todo el País</span>
-        <span class="perk-pill"><span class="perk-icon">💎</span> Oro Macizo 18K & Gemas Éticas</span>
-        <span class="perk-pill"><span class="perk-icon">✨</span> 3 y 6 Cuotas Sin Interés</span>
-        <span class="perk-pill"><span class="perk-icon">🌿</span> Orfebrería Artesanal en Recoleta</span>
-        <span class="perk-pill"><span class="perk-icon">🤍</span> Packaging de Lujo & Certificado</span>
-        <span class="perk-pill"><span class="perk-icon">✦</span> Envío Gratis a Todo el País</span>
-        <span class="perk-pill"><span class="perk-icon">💎</span> Oro Macizo 18K & Gemas Éticas</span>
-        <span class="perk-pill"><span class="perk-icon">✨</span> 3 y 6 Cuotas Sin Interés</span>
-        <span class="perk-pill"><span class="perk-icon">🌿</span> Orfebrería Artesanal en Recoleta</span>
-        <span class="perk-pill"><span class="perk-icon">🤍</span> Packaging de Lujo & Certificado</span>
+        <span class="perk-pill"><span class="perk-icon" data-icon="shipping"></span> Envío Gratis a Todo el País</span>
+        <span class="perk-pill"><span class="perk-icon" data-icon="diamond"></span> Oro Macizo 18K & Gemas Éticas</span>
+        <span class="perk-pill"><span class="perk-icon" data-icon="creditCard"></span> 3 y 6 Cuotas Sin Interés</span>
+        <span class="perk-pill"><span class="perk-icon" data-icon="certificate"></span> Orfebrería Artesanal en Recoleta</span>
+        <span class="perk-pill"><span class="perk-icon" data-icon="gift"></span> Packaging de Lujo & Certificado</span>
+        <span class="perk-pill"><span class="perk-icon" data-icon="shipping"></span> Envío Gratis a Todo el País</span>
+        <span class="perk-pill"><span class="perk-icon" data-icon="diamond"></span> Oro Macizo 18K & Gemas Éticas</span>
+        <span class="perk-pill"><span class="perk-icon" data-icon="creditCard"></span> 3 y 6 Cuotas Sin Interés</span>
+        <span class="perk-pill"><span class="perk-icon" data-icon="certificate"></span> Orfebrería Artesanal en Recoleta</span>
+        <span class="perk-pill"><span class="perk-icon" data-icon="gift"></span> Packaging de Lujo & Certificado</span>
       </div>
       <div class="perks-content" aria-hidden="true">
-        <span class="perk-pill"><span class="perk-icon">✦</span> Envío Gratis a Todo el País</span>
-        <span class="perk-pill"><span class="perk-icon">💎</span> Oro Macizo 18K & Gemas Éticas</span>
-        <span class="perk-pill"><span class="perk-icon">✨</span> 3 y 6 Cuotas Sin Interés</span>
-        <span class="perk-pill"><span class="perk-icon">🌿</span> Orfebrería Artesanal en Recoleta</span>
-        <span class="perk-pill"><span class="perk-icon">🤍</span> Packaging de Lujo & Certificado</span>
-        <span class="perk-pill"><span class="perk-icon">✦</span> Envío Gratis a Todo el País</span>
-        <span class="perk-pill"><span class="perk-icon">💎</span> Oro Macizo 18K & Gemas Éticas</span>
-        <span class="perk-pill"><span class="perk-icon">✨</span> 3 y 6 Cuotas Sin Interés</span>
-        <span class="perk-pill"><span class="perk-icon">🌿</span> Orfebrería Artesanal en Recoleta</span>
-        <span class="perk-pill"><span class="perk-icon">🤍</span> Packaging de Lujo & Certificado</span>
+        <span class="perk-pill"><span class="perk-icon" data-icon="shipping"></span> Envío Gratis a Todo el País</span>
+        <span class="perk-pill"><span class="perk-icon" data-icon="diamond"></span> Oro Macizo 18K & Gemas Éticas</span>
+        <span class="perk-pill"><span class="perk-icon" data-icon="creditCard"></span> 3 y 6 Cuotas Sin Interés</span>
+        <span class="perk-pill"><span class="perk-icon" data-icon="certificate"></span> Orfebrería Artesanal en Recoleta</span>
+        <span class="perk-pill"><span class="perk-icon" data-icon="gift"></span> Packaging de Lujo & Certificado</span>
+        <span class="perk-pill"><span class="perk-icon" data-icon="shipping"></span> Envío Gratis a Todo el País</span>
+        <span class="perk-pill"><span class="perk-icon" data-icon="diamond"></span> Oro Macizo 18K & Gemas Éticas</span>
+        <span class="perk-pill"><span class="perk-icon" data-icon="creditCard"></span> 3 y 6 Cuotas Sin Interés</span>
+        <span class="perk-pill"><span class="perk-icon" data-icon="certificate"></span> Orfebrería Artesanal en Recoleta</span>
+        <span class="perk-pill"><span class="perk-icon" data-icon="gift"></span> Packaging de Lujo & Certificado</span>
       </div>
     </div>
   </div>
+
+  <!-- Sección Colecciones Destacadas / Shop by Category (Estilo Brooki Bakehouse) -->
+  <section class="featured-collections-section">
+    <div class="container">
+      <div class="section-header fade-in-scroll">
+        <div class="section-subtitle">Categorías del Atelier</div>
+        <h2 class="section-title">Explorar por Colección</h2>
+      </div>
+
+      <div class="collections-carousel-grid">
+        <!-- Colección 1: Anillos -->
+        <div class="collection-bubble-card" onclick="selectNavCategory('anillos')">
+          <div class="collection-img-wrap">
+            <img src="https://images.unsplash.com/photo-1605100804763-247f67b3557e?auto=format&fit=crop&w=600&q=80" alt="Colección de Anillos">
+            <span class="collection-pill-badge">Ver Anillos</span>
+          </div>
+          <div class="collection-info">
+            <h3 class="collection-card-name">Anillos & Solitarios</h3>
+            <span class="collection-count-hint">Ver Piezas <span data-icon="arrowRight" class="icon-sm"></span></span>
+          </div>
+        </div>
+
+        <!-- Colección 2: Collares -->
+        <div class="collection-bubble-card" onclick="selectNavCategory('collares')">
+          <div class="collection-img-wrap">
+            <img src="https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?auto=format&fit=crop&w=600&q=80" alt="Colección de Collares">
+            <span class="collection-pill-badge">Ver Collares</span>
+          </div>
+          <div class="collection-info">
+            <h3 class="collection-card-name">Collares & Cadenas</h3>
+            <span class="collection-count-hint">Ver Piezas <span data-icon="arrowRight" class="icon-sm"></span></span>
+          </div>
+        </div>
+
+        <!-- Colección 3: Aros -->
+        <div class="collection-bubble-card" onclick="selectNavCategory('aros')">
+          <div class="collection-img-wrap">
+            <img src="https://images.unsplash.com/photo-1630019852942-f89202989a59?auto=format&fit=crop&w=600&q=80" alt="Colección de Aros">
+            <span class="collection-pill-badge">Ver Aros</span>
+          </div>
+          <div class="collection-info">
+            <h3 class="collection-card-name">Aros & Criollos</h3>
+            <span class="collection-count-hint">Ver Piezas <span data-icon="arrowRight" class="icon-sm"></span></span>
+          </div>
+        </div>
+
+        <!-- Colección 4: Pulseras -->
+        <div class="collection-bubble-card" onclick="selectNavCategory('pulseras')">
+          <div class="collection-img-wrap">
+            <img src="https://images.unsplash.com/photo-1611591475825-9c9868e82ef6?auto=format&fit=crop&w=600&q=80" alt="Colección de Pulseras">
+            <span class="collection-pill-badge">Ver Pulseras</span>
+          </div>
+          <div class="collection-info">
+            <h3 class="collection-card-name">Pulseras & Rivières</h3>
+            <span class="collection-count-hint">Ver Piezas <span data-icon="arrowRight" class="icon-sm"></span></span>
+          </div>
+        </div>
+
+        <!-- Colección 5: Diamantes -->
+        <div class="collection-bubble-card highlight-rose" onclick="selectNavCategory('diamantes')">
+          <div class="collection-img-wrap">
+            <img src="https://images.unsplash.com/photo-1603561596112-0a132b757442?auto=format&fit=crop&w=600&q=80" alt="Alta Joyería Diamantes">
+            <span class="collection-pill-badge badge-rose">Alta Joyería</span>
+          </div>
+          <div class="collection-info">
+            <h3 class="collection-card-name">Diamantes & Gemas</h3>
+            <span class="collection-count-hint">Ver Piezas <span data-icon="arrowRight" class="icon-sm"></span></span>
+          </div>
+        </div>
+
+        <!-- Colección 6: Edición Limitada -->
+        <div class="collection-bubble-card highlight-celeste" onclick="selectNavCategory('limitada')">
+          <div class="collection-img-wrap">
+            <img src="https://images.unsplash.com/photo-1603561591411-07134e71a2a9?auto=format&fit=crop&w=600&q=80" alt="Edición Limitada">
+            <span class="collection-pill-badge badge-celeste">Seriadas</span>
+          </div>
+          <div class="collection-info">
+            <h3 class="collection-card-name">Edición Limitada</h3>
+            <span class="collection-count-hint">Ver Piezas <span data-icon="arrowRight" class="icon-sm"></span></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 
   <!-- Sección de Catálogo -->
   <section class="catalog-section" id="catalogo">

@@ -218,5 +218,93 @@
     },
     "sizes": ["40 cm", "45 cm", "50 cm"],
     "in_stock": true
+  },
+  {
+    "id": "aurea-11",
+    "name": "Solitario Halo Imperial Diamante",
+    "category": "diamantes",
+    "category_label": "Alta Joyería",
+    "metal": "Oro Blanco 18K",
+    "metal_group": "oro-blanco",
+    "price": 890000,
+    "badge": "Pieza Única",
+    "featured": true,
+    "primary_image": "https://images.unsplash.com/photo-1605100804763-247f67b3557e?auto=format&fit=crop&w=900&q=85",
+    "secondary_image": "https://images.unsplash.com/photo-1603561596112-0a132b757442?auto=format&fit=crop&w=900&q=85",
+    "description": "Diamante central de laboratorio corte brillante de 0.75 ct (Color D, VVS1) orlado por una corona de micropavé de 16 diamantes cultivados engastados bajo microscopio.",
+    "specs": {
+      "metal": "Oro Blanco 18k rodiado",
+      "diamante_central": "0.75 ct certificación GIA/IGI",
+      "diamantes_halo": "0.20 ct total micropavé",
+      "peso": "3.8 gramos"
+    },
+    "sizes": ["12", "14", "16", "18"],
+    "in_stock": true
+  },
+  {
+    "id": "aurea-12",
+    "name": "Earcuffs Constelación Pavé",
+    "category": "diamantes",
+    "category_label": "Alta Joyería",
+    "metal": "Oro 18K",
+    "metal_group": "oro",
+    "price": 380000,
+    "badge": "Exclusivo",
+    "featured": true,
+    "primary_image": "https://images.unsplash.com/photo-1630019852942-f89202989a59?auto=format&fit=crop&w=900&q=85",
+    "secondary_image": "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?auto=format&fit=crop&w=900&q=85",
+    "description": "Earcuff a presión anatómica que abraza el cartílago sin necesidad de perforación. Línea sinuosa cuajada de diamantes éticos que capturan la luz con cada movimiento.",
+    "specs": {
+      "metal": "Oro Amarillo 18k",
+      "piedras": "12 diamantes corte brillante (0.15 ct total)",
+      "ajuste": "Presión flexible indeformable",
+      "acabado": "Pulido brillante a espejo"
+    },
+    "sizes": ["Ajustable"],
+    "in_stock": true
+  },
+  {
+    "id": "aurea-13",
+    "name": "Anillo Escultura Marea",
+    "category": "limitada",
+    "category_label": "Edición Limitada",
+    "metal": "Oro 18K",
+    "metal_group": "oro",
+    "price": 640000,
+    "badge": "Edición Limitada",
+    "featured": true,
+    "primary_image": "https://images.unsplash.com/photo-1603561591411-07134e71a2a9?auto=format&fit=crop&w=900&q=85",
+    "secondary_image": "https://images.unsplash.com/photo-1605100804763-247f67b3557e?auto=format&fit=crop&w=900&q=85",
+    "description": "Una de las 10 piezas seriadas forjadas este año. Forma biomórfica modelada en cera perdida con volumen cóncavo y textura pulida en transición a satín.",
+    "specs": {
+      "metal": "Oro Amarillo 18k macizo",
+      "edicion": "Serie de 10 unidades numeradas",
+      "peso": "7.4 gramos",
+      "origen": "Taller Recoleta, Buenos Aires"
+    },
+    "sizes": ["14", "16", "18"],
+    "in_stock": true
+  },
+  {
+    "id": "aurea-14",
+    "name": "Collar Medallón Eclipse",
+    "category": "limitada",
+    "category_label": "Edición Limitada",
+    "metal": "Oro Blanco & Amarillo 18K",
+    "metal_group": "oro",
+    "price": 580000,
+    "badge": "Edición Limitada",
+    "featured": true,
+    "primary_image": "https://images.unsplash.com/photo-1602751584552-8ba73aad10e1?auto=format&fit=crop&w=900&q=85",
+    "secondary_image": "https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?auto=format&fit=crop&w=900&q=85",
+    "description": "Juego bimetálico donde dos discos móviles superpuestos generan el efecto de un eclipse solar. Incluye cadena barbada fina de 55 cm.",
+    "specs": {
+      "metal": "Oro Amarillo 18k y Oro Blanco 18k",
+      "diametro": "20 mm",
+      "cadena": "55 cm regulable",
+      "peso": "6.8 gramos"
+    },
+    "sizes": ["50 cm", "55 cm"],
+    "in_stock": true
   }
 ]
