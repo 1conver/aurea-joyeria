@@ -395,6 +395,20 @@ ACTUALIZACIÓN: ANIMACIONES DE DESLIZAMIENTO AL HACER SCROLL (Brooki Bakehouse)
 
 
 ================================================================================
+ACTUALIZACIÓN: REDES SOCIALES & ASESORA VIRTUAL CON IA (ÁUREA CONCIERGE)
+================================================================================
+- Redes Sociales (Instagram & WhatsApp):
+  * Botones vectoriales en la cabecera (junto al buscador y carrito).
+  * Cápsulas de contacto en la primera columna del pie de página y enlaces en la columna de servicios.
+  * Notificaciones amigables (toast) indicando que los enlaces directos se activarán próximamente.
+- Chat Flotante con IA Asesora de Joyería:
+  * Botón flotante circular con degradé exacto del pie de página (blanco a rosa pastel #FAF0F3/#F7E8ED/#F4D3DC) con indicador pulsante verde de disponibilidad.
+  * Pastilla flotante con micro-animación de bienvenida "Asesora Áurea IA".
+  * Motor conversacional con IA con conocimiento de talles argentinos de anillos, aleaciones de Oro 18K y Plata 925, diamantes cultivados neutros VVS, cuotas sin interés y envíos Andreani.
+  * Sugerencias rápidas (chips) e inserción interactiva de tarjetas de productos recomendados dentro del chat con apertura directa a Vista Rápida.
+
+
+================================================================================
 5. CÓMO EJECUTAR LOCALMENTE
 ================================================================================
 1. Abrir PowerShell en Windows

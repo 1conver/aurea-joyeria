@@ -75,6 +75,16 @@
           <input type="text" id="header-search-input" placeholder="Buscar joya..." class="header-search-field">
         </div>
 
+        <!-- Redes Sociales Rápidas -->
+        <div class="header-social-links" aria-label="Redes del atelier">
+          <a href="#" class="header-icon-btn" aria-label="Instagram Oficial" title="Instagram Oficial" onclick="event.preventDefault(); showToast('Instagram Oficial: Enlace disponible próximamente');">
+            <span data-icon="instagram"></span>
+          </a>
+          <a href="#" class="header-icon-btn" aria-label="WhatsApp Asesoría" title="WhatsApp Asesoría" onclick="event.preventDefault(); showToast('WhatsApp de Asesoría: Enlace disponible próximamente');">
+            <span data-icon="whatsapp"></span>
+          </a>
+        </div>
+
         <!-- Botón de Bolsa de Compras -->
         <button class="header-btn btn-open-cart" aria-label="Abrir bolsa de compras">
           <span data-icon="bag"></span>
@@ -360,9 +370,21 @@
           <p class="footer-brand-desc">
             Joyería minimalista de diseño y alta factura orfebre. Diseñada y manufacturada en la Ciudad Autónoma de Buenos Aires.
           </p>
-          <div style="font-size: 0.75rem; color: var(--text-muted); line-height: 1.6;">
+          <div style="font-size: 0.75rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 1.1rem;">
             Atelier: Av. Alvear 1850, Recoleta, CABA.<br>
             Atención personalizada con cita previa.
+          </div>
+
+          <!-- Redes Sociales Oficiales (Instagram & WhatsApp) -->
+          <div class="footer-social-strip">
+            <a href="#" class="social-badge-btn" aria-label="Instagram de Áurea" onclick="event.preventDefault(); showToast('Canal oficial de Instagram: Enlace disponible próximamente');">
+              <span data-icon="instagram"></span>
+              <span>Instagram</span>
+            </a>
+            <a href="#" class="social-badge-btn" aria-label="WhatsApp de Áurea" onclick="event.preventDefault(); showToast('WhatsApp de Asesoría: Enlace disponible próximamente');">
+              <span data-icon="whatsapp"></span>
+              <span>WhatsApp</span>
+            </a>
           </div>
         </div>
 
@@ -384,7 +406,8 @@
             <li><a href="#catalogo" class="footer-link">Cuidados de Metales Nobles</a></li>
             <li><a href="#catalogo" class="footer-link">Política de Envíos Nacionales</a></li>
             <li><a href="#catalogo" class="footer-link">Certificados de Autenticidad</a></li>
-            <li><a href="#catalogo" class="footer-link">Consultas por WhatsApp</a></li>
+            <li><a href="#" class="footer-link" onclick="event.preventDefault(); showToast('WhatsApp de Asesoría: Enlace disponible próximamente');"><span data-icon="whatsapp" style="vertical-align: middle; margin-right: 0.35rem;"></span> Consultas por WhatsApp</a></li>
+            <li><a href="#" class="footer-link" onclick="event.preventDefault(); showToast('Instagram Oficial: Enlace disponible próximamente');"><span data-icon="instagram" style="vertical-align: middle; margin-right: 0.35rem;"></span> Instagram del Atelier</a></li>
           </ul>
         </div>
 
@@ -466,6 +489,95 @@
       </button>
     </div>
   </aside>
+
+  <!-- Asesora Virtual de Joyería con IA (Áurea Concierge) -->
+  <div class="ai-chat-widget" id="ai-chat-widget">
+    <!-- Ventana de Diálogo -->
+    <div class="ai-chat-window" id="ai-chat-window" aria-label="Asesora Virtual de Joyería con IA" role="dialog" aria-hidden="true">
+      <!-- Cabecera -->
+      <div class="ai-chat-header">
+        <div class="ai-chat-profile">
+          <div class="ai-avatar-ring">
+            <span data-icon="sparkle"></span>
+          </div>
+          <div class="ai-profile-info">
+            <div class="ai-profile-name">
+              <span>ÁUREA Concierge IA</span>
+              <span class="ai-status-badge">Online</span>
+            </div>
+            <div class="ai-profile-role">Asesora de Joyería & Alta Orfebrería</div>
+          </div>
+        </div>
+        <div class="ai-chat-actions">
+          <button type="button" class="ai-btn-reset" id="ai-chat-reset" title="Reiniciar conversación" aria-label="Reiniciar conversación">
+            <span data-icon="sparkle"></span>
+          </button>
+          <button type="button" class="ai-btn-close" id="ai-chat-close" title="Cerrar chat" aria-label="Cerrar chat">
+            <span data-icon="close"></span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Mensajes -->
+      <div class="ai-chat-body" id="ai-chat-messages">
+        <div class="chat-msg bot-msg">
+          <div class="msg-bubble">
+            ¡Hola! Te doy la bienvenida a <strong>ÁUREA Atelier</strong>. Soy tu asesora virtual de joyería fina con IA.
+            <br><br>
+            Puedo ayudarte a elegir la joya ideal, orientarte con <strong>talles de anillos</strong>, explicarte nuestras aleaciones de <strong>Oro 18K Macizo y Plata 925</strong>, o asesorarte sobre pagos en hasta <strong>6 cuotas sin interés</strong> y envíos asegurados por Andreani.
+            <br><br>
+            <em>¿En qué pieza o momento especial estás pensando hoy?</em>
+          </div>
+          <span class="msg-time">Ahora</span>
+        </div>
+
+        <!-- Sugerencias rápidas -->
+        <div class="ai-quick-prompts" id="ai-quick-prompts">
+          <button type="button" class="quick-prompt-btn" data-query="¿Cómo puedo saber mi talle de anillo?">
+            <span data-icon="ruler"></span>
+            <span>¿Cómo mido mi talle?</span>
+          </button>
+          <button type="button" class="quick-prompt-btn" data-query="¿Qué diferencia hay entre oro amarillo 18k y oro blanco?">
+            <span data-icon="diamond"></span>
+            <span>Oro 18K vs Oro Blanco</span>
+          </button>
+          <button type="button" class="quick-prompt-btn" data-query="Quiero un regalo elegante para una ocasión especial">
+            <span data-icon="gift"></span>
+            <span>Recomendarme un regalo</span>
+          </button>
+          <button type="button" class="quick-prompt-btn" data-query="¿Cómo son las cuotas sin interés y medios de pago?">
+            <span data-icon="creditCard"></span>
+            <span>Cuotas y Mercado Pago</span>
+          </button>
+          <button type="button" class="quick-prompt-btn" data-query="¿Cómo funcionan los envíos a todo el país?">
+            <span data-icon="shipping"></span>
+            <span>Envíos Andreani</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Formulario de Entrada -->
+      <form class="ai-chat-footer" id="ai-chat-form">
+        <input type="text" id="ai-chat-input" class="ai-chat-input" placeholder="Preguntale a la asesora de Áurea..." autocomplete="off" required>
+        <button type="submit" class="ai-chat-send-btn" id="ai-chat-send" aria-label="Enviar pregunta">
+          <span data-icon="send"></span>
+        </button>
+      </form>
+    </div>
+
+    <!-- Pastilla flotante con sugerencia -->
+    <div class="ai-chat-hint-pill" id="ai-chat-hint-pill" title="Abrir Asesora IA">
+      <span data-icon="sparkle"></span>
+      <span>Asesora Áurea IA</span>
+    </div>
+
+    <!-- Botón flotante circular con degradé del pie de página -->
+    <button type="button" class="ai-chat-trigger" id="ai-chat-trigger" aria-label="Abrir asesora virtual con IA" title="Asesora de Joyería IA">
+      <span class="ai-chat-icon" data-icon="chat"></span>
+      <span class="ai-chat-close-icon" data-icon="close"></span>
+      <span class="ai-pulse-dot" title="Asesora en línea"></span>
+    </button>
+  </div>
 
   <!-- Scripts -->
   <script src="/js/icons.js"></script>
