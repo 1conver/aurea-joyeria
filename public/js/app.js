@@ -92,10 +92,22 @@ function initScrollAnimations() {
             if (entry.target && entry.target.style) {
               entry.target.style.transitionDelay = '0s';
             }
-          }, 950);
+          }, 1100);
         }
       });
-    }, { threshold: 0.04, rootMargin: '0px 0px -30px 0px' });
+    }, { threshold: 0.04, rootMargin: '0px 0px -40px 0px' });
+
+    // Garantizar que todos los elementos al pie de página se revelen al llegar al final del scroll
+    window.addEventListener('scroll', () => {
+      const scrollPos = window.innerHeight + window.scrollY;
+      const docHeight = document.documentElement.scrollHeight;
+      if (scrollPos >= docHeight - 120) {
+        document.querySelectorAll('.fade-in-scroll:not(.is-visible)').forEach(el => {
+          el.classList.add('is-visible');
+          if (scrollObserver) scrollObserver.unobserve(el);
+        });
+      }
+    }, { passive: true });
   }
 
   document.querySelectorAll('.fade-in-scroll:not(.is-visible)').forEach(el => {
@@ -288,7 +300,7 @@ function renderProducts() {
     const badgeClass = getBadgeStyleClass(product.badge);
     const isMobile = window.innerWidth < 768;
     const cols = isMobile ? 2 : 4;
-    const staggerDelay = ((idx % cols) * 0.08).toFixed(2);
+    const staggerDelay = ((idx % cols) * 0.12).toFixed(2);
     return `
       <article class="product-card fade-in-scroll" style="transition-delay: ${staggerDelay}s;" data-product-id="${product.id}">
         <div class="product-media">

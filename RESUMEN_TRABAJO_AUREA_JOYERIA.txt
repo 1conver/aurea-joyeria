@@ -379,14 +379,18 @@ Ver archivo local: C:\Users\Aco\.gemini\antigravity-ide\scratch\aurea-joyeria\ap
 ================================================================================
 ACTUALIZACIÓN: ANIMACIONES DE DESLIZAMIENTO AL HACER SCROLL (Brooki Bakehouse)
 ================================================================================
-- Animaciones de revelado progresivo (fade-in & slide-up): A medida que el usuario
-  baja en la página, los artículos del catálogo, categorías de colección,
-  manifiesto del taller y columnas del pie de página van deslizándose suavemente
-  hacia arriba (translateY 32px a 0 con curva bezier 0.16, 1, 0.3, 1).
-- Escalado dinámico (staggered delay): En desktop de a 4 columnas (0s, 0.08s, 0.16s, 0.24s)
-  y en móvil de a 2 columnas (0s, 0.08s) para un efecto cascada fluido.
-- IntersectionObserver reactivo y optimizado con limpieza de retrasos tras la
-  animación para una interacción instantánea de hover.
+- Deslizamiento pronunciado y elegante: translateY(48px) en desktop y translateY(36px)
+  en móvil con curva bezier (0.16, 1, 0.3, 1) y duración de 0.9s.
+- Cobertura integral en toda la página (excepto toolbar superior fija):
+  * Bloques y características del Hero
+  * Marquee de beneficios y compromisos
+  * Tarjetas de colección en cuadrícula
+  * Filtros y cuadrícula de productos con desfase escalonado de 0.12s
+  * Taller, historia y pilares de orfebrería
+  * Pie de página completo: 4 columnas, franja de copyright y logos de medios de pago
+- Listener optimizado de fondo de página para garantizar que todos los elementos
+  del pie se revelen con total certeza al llegar al límite inferior de scroll.
+- Limpieza de retrasos tras la animación para permitir hover e interacción instantáneos.
 - Respeto a preferencias de accesibilidad con @media (prefers-reduced-motion).
 
 

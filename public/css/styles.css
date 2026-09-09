@@ -2094,8 +2094,8 @@ h1, h2, h3, h4, .serif-font {
 
 .fade-in-scroll {
   opacity: 0;
-  transform: translateY(32px);
-  transition: opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1), transform 0.85s cubic-bezier(0.16, 1, 0.3, 1);
+  transform: translateY(48px);
+  transition: opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1), transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
   will-change: opacity, transform;
 }
 
@@ -2104,10 +2104,18 @@ h1, h2, h3, h4, .serif-font {
   transform: translateY(0);
 }
 
+@media (max-width: 768px) {
+  .fade-in-scroll {
+    transform: translateY(36px);
+    transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+}
+
 /* Evitar retraso de hover tras la revelación */
 .product-card.is-visible:hover,
 .collection-bubble-card.is-visible:hover,
-.pillar-card.is-visible:hover {
+.pillar-card.is-visible:hover,
+.feature-item.is-visible:hover {
   transition-delay: 0s !important;
 }
 
