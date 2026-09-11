@@ -513,44 +513,65 @@
   <div class="ai-chat-widget" id="ai-chat-widget">
     <!-- Ventana de Diálogo -->
     <div class="ai-chat-window" id="ai-chat-window" aria-label="Asesora Virtual de Joyería con IA" role="dialog" aria-hidden="true">
-      <!-- Cabecera -->
+      <!-- Cabecera de Lujo -->
       <div class="ai-chat-header">
         <div class="ai-chat-profile">
           <div class="ai-avatar-ring">
             <span data-icon="sparkle"></span>
+            <span class="ai-avatar-live-dot" title="En línea"></span>
           </div>
           <div class="ai-profile-info">
             <div class="ai-profile-name">
               <span>ÁUREA Concierge IA</span>
               <span class="ai-status-badge">Online</span>
             </div>
-            <div class="ai-profile-role">Asesora Exclusiva de Joyería & Gemología</div>
+            <div class="ai-profile-role">Asesora Oficial · Joyería & Gemología</div>
           </div>
         </div>
+
         <div class="ai-chat-actions">
-          <button type="button" class="ai-btn-reset" id="ai-chat-reset" title="Reiniciar conversación" aria-label="Reiniciar conversación">
+          <!-- Botón de derivación directa a WhatsApp humano -->
+          <a href="https://wa.me/5491140509988?text=Hola%20Áurea%20Atelier,%20quisiera%20asesoramiento%20personalizado%20sobre%20sus%20joyas" target="_blank" class="ai-action-btn ai-btn-wa" title="Consultar con una orfebre por WhatsApp" aria-label="WhatsApp Asesoría">
+            <span data-icon="whatsapp"></span>
+          </a>
+
+          <!-- Botón de sonido sutil boutique -->
+          <button type="button" class="ai-action-btn ai-btn-sound" id="ai-chat-sound-toggle" title="Silenciar / Activar sonido" aria-label="Alternar sonido">
+            <span data-icon="volumeUp"></span>
+          </button>
+
+          <!-- Botón de reinicio -->
+          <button type="button" class="ai-action-btn ai-btn-reset" id="ai-chat-reset" title="Reiniciar conversación" aria-label="Reiniciar conversación">
             <span data-icon="sparkle"></span>
           </button>
-          <button type="button" class="ai-btn-close" id="ai-chat-close" title="Cerrar chat" aria-label="Cerrar chat">
+
+          <!-- Botón de cierre -->
+          <button type="button" class="ai-action-btn ai-btn-close" id="ai-chat-close" title="Cerrar ventana" aria-label="Cerrar chat">
             <span data-icon="close"></span>
           </button>
         </div>
       </div>
 
-      <!-- Mensajes -->
+      <!-- Cuerpo de Mensajes -->
       <div class="ai-chat-body" id="ai-chat-messages">
         <div class="chat-msg bot-msg">
           <div class="msg-bubble">
-            ¡Hola! Te doy la bienvenida a <strong>ÁUREA Atelier</strong>. Soy tu asesora virtual con IA, capacitada única y exclusivamente para orientarte en joyería fina, metales nobles y compras en el atelier.
+            ¡Hola! Te doy la bienvenida a <strong>ÁUREA Atelier</strong>. Soy tu asesora virtual de alta orfebrería y gemología.
             <br><br>
-            Puedo ayudarte a elegir la pieza ideal, orientarte con <strong>talles de anillos</strong>, explicarte nuestras aleaciones de <strong>Oro 18K Macizo y Plata 925</strong>, o asesorarte sobre pagos en hasta <strong>6 cuotas fijas sin interés</strong> y envíos asegurados por Andreani.
-            <br><br>
-            <em>¿En qué pieza o momento especial estás pensando hoy?</em>
+            Estoy capacitada para orientarte con máxima precisión en:
+            <ul class="chat-intro-list">
+              <li><strong>Guía y medición de talles de anillos</strong> en milímetros.</li>
+              <li>Diferencias entre <strong>Oro 18K Macizo, Oro Blanco y Plata 925</strong>.</li>
+              <li>Nuestros <strong>diamantes cultivados éticos</strong> certificados VVS.</li>
+              <li>Financiación en <strong>3 y 6 cuotas sin interés</strong> y <strong>15% OFF</strong> por transferencia.</li>
+              <li><strong>Envíos gratis asegurados</strong> a todo el país por Andreani.</li>
+            </ul>
+            <em>¿En qué pieza o momento especial te gustaría que te oriente hoy?</em>
           </div>
           <span class="msg-time">Ahora</span>
         </div>
 
-        <!-- Sugerencias rápidas -->
+        <!-- Sugerencias Rápidas Iniciales -->
         <div class="ai-quick-prompts" id="ai-quick-prompts">
           <button type="button" class="quick-prompt-btn" data-query="¿Cómo puedo saber mi talle de anillo?">
             <span data-icon="ruler"></span>
@@ -560,11 +581,15 @@
             <span data-icon="diamond"></span>
             <span>Oro 18K vs Oro Blanco</span>
           </button>
-          <button type="button" class="quick-prompt-btn" data-query="Quiero un regalo elegante para una ocasión especial">
+          <button type="button" class="quick-prompt-btn" data-query="Quiero un anillo de compromiso o regalo especial">
             <span data-icon="gift"></span>
-            <span>Recomendarme un regalo</span>
+            <span>Anillo de Compromiso</span>
           </button>
-          <button type="button" class="quick-prompt-btn" data-query="¿Cómo son las cuotas sin interés y medios de pago?">
+          <button type="button" class="quick-prompt-btn" data-query="¿Cómo son los diamantes cultivados en laboratorio?">
+            <span data-icon="sparkle"></span>
+            <span>Diamantes Lab-Grown</span>
+          </button>
+          <button type="button" class="quick-prompt-btn" data-query="¿Cómo funcionan las 3 y 6 cuotas y medios de pago?">
             <span data-icon="creditCard"></span>
             <span>Cuotas y Mercado Pago</span>
           </button>
@@ -575,10 +600,16 @@
         </div>
       </div>
 
-      <!-- Formulario de Entrada -->
+      <!-- Formulario de Entrada con Dictado por Voz -->
       <form class="ai-chat-footer" id="ai-chat-form">
-        <input type="text" id="ai-chat-input" class="ai-chat-input" placeholder="Preguntale a la asesora de Áurea..." autocomplete="off" required>
-        <button type="submit" class="ai-chat-send-btn" id="ai-chat-send" aria-label="Enviar pregunta">
+        <!-- Micrófono para dictado por voz (Web Speech API) -->
+        <button type="button" class="ai-chat-mic-btn" id="ai-chat-mic" aria-label="Dictar pregunta por voz" title="Dictar por voz">
+          <span data-icon="mic"></span>
+        </button>
+
+        <input type="text" id="ai-chat-input" class="ai-chat-input" placeholder="Preguntá sobre talles, oro, diamantes..." autocomplete="off" required>
+
+        <button type="submit" class="ai-chat-send-btn" id="ai-chat-send" aria-label="Enviar pregunta" title="Enviar">
           <span data-icon="send"></span>
         </button>
       </form>

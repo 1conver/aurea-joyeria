@@ -477,7 +477,23 @@ ACTUALIZACIÓN: REARQUITECTURA & PROPORCIONES DEL TOOLBAR SUPERIOR
    - Fila de búsqueda dedicada a ancho completo (mobile-search-bar) para máxima comodidad táctil,
      sin apretujarse contra el logotipo ni los botones.
    - Sincronización en tiempo real entre los campos de búsqueda móvil y de escritorio en app.js.
-   - Franja táctil deslizable de categorías con pastillas confortables para el pulgar.
+4. ASESORA VIRTUAL CON IA MEJORADA SUSTANCIALMENTE (ÁUREA CONCIERGE IA):
+   - Motor de Inteligencia Artificial especializado única y exclusivamente en joyería:
+     * Detección y filtrado dinámico por presupuesto en pesos argentinos (ARS)
+       (ej. "hasta 150 mil", "menos de $200.000", "opciones accesibles", "alta gama").
+     * Gemología avanzada: Diamantes cultivados (lab-grown) carbono neutro certificados VVS,
+       Oro 18K macizo, Oro Blanco con paladio/rodio, Plata 925 de Ley y tabla métrica de talles.
+     * Guardrail estricto de seguridad: Rechazo cortés e inmediato a temas ajenos a la joyería.
+     * Retiro definitivo de cualquier mención a Recoleta en el prompt del sistema y respuestas.
+   - Experiencia de Usuario & E-Commerce Interactivo:
+     * Dictado por voz nativo (Web Speech API) con botón de micrófono animado.
+     * Notificación acústica de lujo (micro-chime boutique sintetizado vía Web Audio API)
+       con control de silenciado (volumeUp / volumeMute) y memoria en localStorage.
+     * Tarjetas de producto interactivas de Doble Acción: botón "Ver" (QuickView) y botón
+       "+ Bolsa" (agrega la alhaja directamente a la bolsa de compras en un clic).
+     * Píldoras de sugerencias contextuales dinámicas que se adaptan al tema conversado.
+     * Botón de derivación directa y banner a WhatsApp humano con mensaje precargado.
+     * Formateador de Markdown a HTML (negrita, cursiva, viñetas, códigos y enlaces).
 
 
 ================================================================================

@@ -1291,14 +1291,109 @@ function initAIChatAdvisor() {
   const hintPill = document.getElementById('ai-chat-hint-pill');
   const closeBtn = document.getElementById('ai-chat-close');
   const resetBtn = document.getElementById('ai-chat-reset');
+  const soundToggleBtn = document.getElementById('ai-chat-sound-toggle');
+  const micBtn = document.getElementById('ai-chat-mic');
   const formEl = document.getElementById('ai-chat-form');
   const inputEl = document.getElementById('ai-chat-input');
   const messagesEl = document.getElementById('ai-chat-messages');
 
-  // Historial de conversación para contexto de IA
+  // Historial de conversación para contexto de IA multi-turno
   const chatHistory = [];
+  let isSoundEnabled = localStorage.getItem('aurea_chat_sound') !== 'muted';
 
   if (!widgetEl || !triggerBtn || !formEl) return;
+
+  // Actualizar estado visual del botón de sonido
+  function updateSoundIcon() {
+    if (soundToggleBtn) {
+      soundToggleBtn.innerHTML = isSoundEnabled ? (window.getIcon ? window.getIcon('volumeUp') : '') : (window.getIcon ? window.getIcon('volumeMute') : '');
+      soundToggleBtn.classList.toggle('is-muted', !isSoundEnabled);
+      soundToggleBtn.setAttribute('title', isSoundEnabled ? 'Silenciar notificaciones del chat' : 'Activar sonido del chat');
+    }
+  }
+  updateSoundIcon();
+
+  if (soundToggleBtn) {
+    soundToggleBtn.addEventListener('click', () => {
+      isSoundEnabled = !isSoundEnabled;
+      localStorage.setItem('aurea_chat_sound', isSoundEnabled ? 'active' : 'muted');
+      updateSoundIcon();
+      showToast(isSoundEnabled ? 'Sonido del chat activado' : 'Sonido del chat silenciado');
+      if (isSoundEnabled) playChatChime();
+    });
+  }
+
+  // Micro-chime de audio sutil tipo boutique con Web Audio API
+  function playChatChime() {
+    if (!isSoundEnabled) return;
+    try {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if (!AudioCtx) return;
+      const ctx = new AudioCtx();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(1318.51, ctx.currentTime); // E6
+      osc.frequency.exponentialRampToValueAtTime(1661.22, ctx.currentTime + 0.12); // G#6
+      gain.gain.setValueAtTime(0.04, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.32);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start();
+      osc.stop(ctx.currentTime + 0.32);
+    } catch (e) {
+      // AudioContext bloqueado o no disponible
+    }
+  }
+
+  // Dictado por voz (Web Speech API)
+  if (micBtn) {
+    const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (SpeechRec) {
+      const recognition = new SpeechRec();
+      recognition.lang = 'es-AR';
+      recognition.interimResults = false;
+      recognition.maxAlternatives = 1;
+
+      recognition.onstart = () => {
+        micBtn.classList.add('is-recording');
+        micBtn.setAttribute('title', 'Escuchando tu pregunta... (hablá ahora)');
+        showToast('Escuchando... dictá tu consulta sobre joyas');
+      };
+
+      recognition.onresult = (event) => {
+        const transcript = event.results[0][0].transcript;
+        if (transcript) {
+          inputEl.value = transcript;
+          handleUserMessage(transcript);
+        }
+      };
+
+      recognition.onerror = () => {
+        micBtn.classList.remove('is-recording');
+        micBtn.setAttribute('title', 'Dictar por voz');
+      };
+
+      recognition.onend = () => {
+        micBtn.classList.remove('is-recording');
+        micBtn.setAttribute('title', 'Dictar por voz');
+      };
+
+      micBtn.addEventListener('click', () => {
+        try {
+          if (micBtn.classList.contains('is-recording')) {
+            recognition.stop();
+          } else {
+            recognition.start();
+          }
+        } catch (err) {
+          micBtn.classList.remove('is-recording');
+        }
+      });
+    } else {
+      micBtn.style.display = 'none';
+    }
+  }
 
   function toggleChat(forceOpen = null) {
     const shouldOpen = forceOpen !== null ? forceOpen : !widgetEl.classList.contains('is-open');
@@ -1324,7 +1419,7 @@ function initAIChatAdvisor() {
       messagesEl.innerHTML = `
         <div class="chat-msg bot-msg">
           <div class="msg-bubble">
-            Conversación reiniciada. ¿En qué pieza o inquietud de joyería puedo orientarte hoy?
+            ¡Hola de nuevo! Conversación reiniciada. ¿En qué pieza o inquietud de joyería puedo orientarte hoy?
           </div>
           <span class="msg-time">Ahora</span>
         </div>
@@ -1337,11 +1432,15 @@ function initAIChatAdvisor() {
             <span data-icon="diamond"></span>
             <span>Oro 18K vs Oro Blanco</span>
           </button>
-          <button type="button" class="quick-prompt-btn" data-query="Quiero un regalo elegante para una ocasión especial">
+          <button type="button" class="quick-prompt-btn" data-query="Quiero un anillo de compromiso o regalo especial">
             <span data-icon="gift"></span>
-            <span>Recomendarme un regalo</span>
+            <span>Anillo de Compromiso</span>
           </button>
-          <button type="button" class="quick-prompt-btn" data-query="¿Cómo son las cuotas sin interés y medios de pago?">
+          <button type="button" class="quick-prompt-btn" data-query="¿Cómo son los diamantes cultivados en laboratorio?">
+            <span data-icon="sparkle"></span>
+            <span>Diamantes Lab-Grown</span>
+          </button>
+          <button type="button" class="quick-prompt-btn" data-query="¿Cómo funcionan las 3 y 6 cuotas y medios de pago?">
             <span data-icon="creditCard"></span>
             <span>Cuotas y Mercado Pago</span>
           </button>
@@ -1369,7 +1468,7 @@ function initAIChatAdvisor() {
     }
   });
 
-  // Envío del mensaje del usuario
+  // Envío del formulario de texto
   formEl.addEventListener('submit', (e) => {
     e.preventDefault();
     const text = inputEl.value.trim();
@@ -1396,49 +1495,114 @@ function initAIChatAdvisor() {
     scrollChatToBottom();
   }
 
-  function appendBotMessage(htmlContent, matchedProducts = []) {
+  // Formateador de Markdown a HTML elegante
+  function formatMarkdown(text) {
+    if (!text) return '';
+    let html = text;
+    // Negrita **texto** o __texto__
+    html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+    html = html.replace(/__(.*?)__/g, '<strong>$1</strong>');
+    // Cursiva *texto* o _texto_
+    html = html.replace(/\*([^*\n]+)\*/g, '<em>$1</em>');
+    // Código `código`
+    html = html.replace(/`([^`]+)`/g, '<code>$1</code>');
+    // Viñetas: líneas que empiezan con • o - o *
+    html = html.replace(/(?:^|\n)[-•*]\s+(.+)/g, '\n<li>$1</li>');
+    // Agrupar <li> consecutivos en <ul>
+    html = html.replace(/(<li>[\s\S]*?<\/li>)/g, '<ul class="chat-intro-list">$1</ul>');
+    // Reemplazar saltos de línea dobles y simples
+    html = html.replace(/\n\n+/g, '<br><br>');
+    html = html.replace(/\n/g, '<br>');
+    return html;
+  }
+
+  function appendBotMessage(content, matchedProducts = [], suggestions = []) {
     const msgDiv = document.createElement('div');
     msgDiv.className = 'chat-msg bot-msg';
     const nowStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
+    // 1. Tarjetas interactivas de producto con Doble Acción (Ver / Comprar)
     let prodsHtml = '';
     if (matchedProducts && matchedProducts.length > 0) {
       prodsHtml = matchedProducts.slice(0, 3).map(prod => {
         const cuota3 = Math.round(prod.price / 3);
+        const metalText = prod.metal ? `<div class="ai-prod-metal-tag">${escapeHTML(prod.metal)}</div>` : '';
         return `
           <div class="ai-prod-recommendation" data-id="${prod.id}">
-            <img src="${prod.primary_image}" alt="${prod.name}" class="ai-prod-thumb">
-            <div class="ai-prod-details">
-              <div class="ai-prod-title">${prod.name}</div>
-              <div class="ai-prod-price">${formatARS(prod.price)} · 3x ${formatARS(cuota3)}</div>
+            <img src="${prod.primary_image}" alt="${escapeHTML(prod.name)}" class="ai-prod-thumb" data-view-id="${prod.id}" title="Ver imagen ampliada">
+            <div class="ai-prod-details" data-view-id="${prod.id}">
+              <div class="ai-prod-title">${escapeHTML(prod.name)}</div>
+              ${metalText}
+              <div class="ai-prod-price">${formatARS(prod.price)} <span style="font-size: 0.68rem; font-weight: normal; color: var(--text-muted);">· 3x ${formatARS(cuota3)}</span></div>
             </div>
-            <button class="btn-luxury-outline" style="padding: 0.3rem 0.65rem; font-size: 0.68rem;" data-quickview-id="${prod.id}">
-              Ver
-            </button>
+            <div class="ai-prod-actions">
+              <button type="button" class="ai-prod-view-btn" data-view-id="${prod.id}">
+                Ver
+              </button>
+              <button type="button" class="ai-prod-buy-btn" data-add-id="${prod.id}" title="Agregar a la bolsa de compras">
+                + Bolsa
+              </button>
+            </div>
           </div>
         `;
       }).join('');
     }
 
+    // 2. Chips dinámicos contextuales
+    let chipsHtml = '';
+    if (suggestions && suggestions.length > 0) {
+      chipsHtml = `
+        <div class="ai-quick-prompts">
+          ${suggestions.map(sug => `
+            <button type="button" class="quick-prompt-btn" data-query="${escapeHTML(sug)}">
+              <span data-icon="sparkle"></span>
+              <span>${escapeHTML(sug)}</span>
+            </button>
+          `).join('')}
+        </div>
+      `;
+    }
+
+    const formattedContent = formatMarkdown(content);
+
     msgDiv.innerHTML = `
       <div class="msg-bubble">
-        ${htmlContent}
+        ${formattedContent}
         ${prodsHtml}
+        ${chipsHtml}
       </div>
       <span class="msg-time">${nowStr}</span>
     `;
 
     messagesEl.appendChild(msgDiv);
+    if (window.initIcons) window.initIcons(msgDiv);
     scrollChatToBottom();
+    playChatChime();
 
-    // Eventos de click en las recomendaciones
-    msgDiv.querySelectorAll('[data-id], [data-quickview-id]').forEach(el => {
+    // Eventos: Abrir QuickView
+    msgDiv.querySelectorAll('[data-view-id]').forEach(el => {
       el.addEventListener('click', (ev) => {
         ev.stopPropagation();
-        const id = el.getAttribute('data-id') || el.getAttribute('data-quickview-id');
-        const prod = AppState.products.find(p => p.id === id);
+        const id = el.getAttribute('data-view-id');
+        const prod = (AppState.products || []).find(p => p.id === id);
+        if (prod) openQuickView(prod);
+      });
+    });
+
+    // Eventos: Agregar a la bolsa directamente desde el chat
+    msgDiv.querySelectorAll('[data-add-id]').forEach(btn => {
+      btn.addEventListener('click', (ev) => {
+        ev.stopPropagation();
+        const id = btn.getAttribute('data-add-id');
+        const prod = (AppState.products || []).find(p => p.id === id);
         if (prod) {
-          openQuickView(prod);
+          addToCart(prod.id, 1, prod.sizes && prod.sizes.length ? prod.sizes[0] : null);
+          btn.textContent = '¡Agregada!';
+          btn.style.background = '#3E9E68';
+          setTimeout(() => {
+            btn.textContent = '+ Bolsa';
+            btn.style.background = '';
+          }, 2000);
         }
       });
     });
@@ -1472,9 +1636,10 @@ function initAIChatAdvisor() {
 
     let botReply = '';
     let matchedProducts = [];
+    let suggestions = [];
 
     try {
-      // 1. Intentar llamar al endpoint de backend (conectado a Gemini / OpenAI o motor experto)
+      // 1. Intentar llamar al backend con el historial completo
       const res = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -1486,26 +1651,29 @@ function initAIChatAdvisor() {
         if (data && data.success && data.reply) {
           botReply = data.reply;
           matchedProducts = data.products || [];
+          suggestions = data.suggestions || [];
         }
       }
     } catch (err) {
       console.warn('Backend chat no disponible, recurriendo al motor de joyería del cliente:', err);
     }
 
-    // 2. Si no hubo respuesta del backend, recurrir al motor experto especializado del cliente
+    // 2. Si no hubo respuesta del backend, recurrir al motor experto del cliente
     if (!botReply) {
-      await new Promise(r => setTimeout(r, 450));
+      await new Promise(r => setTimeout(r, 400));
       const localResponse = generateAIResponse(query);
       botReply = localResponse.text;
       matchedProducts = localResponse.products || [];
+      suggestions = localResponse.suggestions || [];
     }
 
     removeTypingIndicator();
-    appendBotMessage(botReply, matchedProducts);
+    appendBotMessage(botReply, matchedProducts, suggestions);
     chatHistory.push({ role: 'assistant', text: botReply });
   }
 
   function escapeHTML(str) {
+    if (!str) return '';
     const p = document.createElement('p');
     p.textContent = str;
     return p.innerHTML;
@@ -1515,11 +1683,21 @@ function initAIChatAdvisor() {
 // Patrones de detección para temas ajenos a la joyería (Guardrail Estricto)
 const OFF_TOPIC_REGEX = /\b(python|javascript|typescript|react|html|css|php|java|c\+\+|sql|codigo|código|programar|programacion|programación|script|bug|api|backend|frontend|futbol|fútbol|messi|maradona|river|boca|partido|mundial|champions|gol|deporte|tenis|nba|politica|política|presidente|elecciones|gobierno|milei|cristina|macri|receta|cocinar|torta|brownie|pasta|asado|horno|matematica|matemática|ecuacion|ecuación|raiz cuadrada|derivada|calcular|cuanto es|clima|pronostico|pronóstico|temperatura|va a llover|chiste|broma|cuento|pelicula|película|serie|netflix|spotify|cancion|canción)\b/i;
 
-const JEWELRY_REGEX = /\b(joya|joyas|joyería|joyeria|anillo|anillos|alianza|alianzas|solitario|collar|collares|gargantilla|aros|arito|aritos|argolla|pulsera|pulseras|brazalete|oro|plata|platino|rodio|quilate|quilates|18k|925|diamante|diamantes|gema|gemas|piedra|piedras|brillante|zafiro|esmeralda|rubi|rubí|perla|talle|talles|talla|medida|medir|milimetro|milímetro|mm|dedo|compra|comprar|precio|costo|valor|cuota|cuotas|tarjeta|mercado pago|mercadopago|transferencia|descuento|banco|envio|envios|envíos|andreani|entrega|demora|despacho|retiro|taller|atelier|recoleta|alvear|aurea|áurea|regalo|regalos|aniversario|compromiso|casamiento|boda|novia|novio|limpieza|limpiar|cuidado|mantenimiento|garantia|garantía|certificado)\b/i;
+const JEWELRY_REGEX = /\b(joya|joyas|joyería|joyeria|anillo|anillos|alianza|alianzas|solitario|collar|collares|gargantilla|aros|arito|aritos|argolla|pulsera|pulseras|brazalete|oro|plata|platino|rodio|quilate|quilates|18k|925|diamante|diamantes|gema|gemas|piedra|piedras|brillante|zafiro|esmeralda|rubi|rubí|perla|talle|talles|talla|medida|medir|milimetro|milímetro|mm|dedo|compra|comprar|precio|costo|valor|cuota|cuotas|tarjeta|mercado pago|mercadopago|transferencia|descuento|banco|envio|envios|envíos|andreani|entrega|demora|despacho|retiro|taller|atelier|alvear|aurea|áurea|regalo|regalos|aniversario|compromiso|casamiento|boda|novia|novio|limpieza|limpiar|cuidado|mantenimiento|garantia|garantía|certificado|presupuesto|barato|accesible|exclusivo)\b/i;
+
+function extractBudgetJS(query) {
+  const q = query.toLowerCase().replace(/\./g, '').replace(/,/g, '');
+  const matchMil = q.match(/(\d+)\s*(mil|k)/);
+  if (matchMil) return parseInt(matchMil[1], 10) * 1000;
+  const matchNum = q.match(/\$?\s*(\d{4,7})/);
+  if (matchNum) return parseInt(matchNum[1], 10);
+  return null;
+}
 
 function generateAIResponse(rawQuery) {
   const query = rawQuery.toLowerCase().trim();
   const products = AppState.products || [];
+  const budget = extractBudgetJS(query);
 
   // GUARDRAIL ESTRICTO: Rechazar de inmediato cualquier consulta ajena a la joyería
   const hasJewelry = JEWELRY_REGEX.test(query);
@@ -1527,117 +1705,90 @@ function generateAIResponse(rawQuery) {
 
   if (isOffTopic && !hasJewelry) {
     return {
-      text: `
-        Disculpas, como asesora de <strong>ÁUREA Atelier</strong> estoy capacitada única y exclusivamente para orientarte sobre nuestras piezas de joyería fina, metales nobles, gemología, talles y compras en el atelier.
-        <br><br>
-        ¿En qué pieza o inquietud de joyería puedo ayudarte hoy?
-      `,
-      products: []
+      text: `Disculpas, como asesora de **ÁUREA Atelier** estoy capacitada única y exclusivamente para orientarte sobre nuestras piezas de joyería fina, metales nobles, gemología, talles y compras en el atelier.\n\n¿En qué pieza o inquietud de joyería puedo ayudarte hoy?`,
+      products: [],
+      suggestions: ["¿Cómo elijo mi talle de anillo?", "Ver joyas en Oro 18K", "Promociones y Cuotas"]
     };
   }
 
-  // 1. Talles de anillo y medidas (Tabla métrica argentina)
+  // 1. Presupuesto explícito del cliente
+  if (budget) {
+    const budgetProds = products.filter(p => p.price <= budget).sort((a, b) => b.price - a.price);
+    return {
+      text: `Para tu presupuesto de hasta **${formatARS(budget)}**, seleccioné las mejores creaciones forjadas en metales nobles con garantía perpetua:\n\nRecordá que podés abonar en **3 y 6 cuotas fijas sin interés** con tarjetas bancarias o acceder a un **15% de descuento directo** por transferencia bancaria.`,
+      products: (budgetProds.length > 0 ? budgetProds : products).slice(0, 3),
+      suggestions: ["Calcular cuotas sin interés", "¿Tienen envío gratis?", "Ver más opciones"]
+    };
+  }
+
+  // 2. Talles de anillo y medidas (Tabla métrica argentina)
   if (query.includes('talle') || query.includes('talla') || query.includes('medir') || query.includes('medida') || query.includes('dedo') || query.includes('anillo')) {
     const ringProds = products.filter(p => p.category === 'anillos' || p.name.toLowerCase().includes('anillo') || p.name.toLowerCase().includes('solitario'));
     return {
-      text: `
-        Para conocer tu talle de anillo exacto en Argentina, el método más seguro es medir en milímetros el <strong>diámetro interno</strong> de un anillo que te quede cómodo (sin contar los bordes metálicos):
-        <br><br>
-        • <strong>16.5 mm</strong> = Talle 12 / 13<br>
-        • <strong>17.2 mm</strong> = Talle 14 / 15 (el estándar más frecuente)<br>
-        • <strong>18.0 mm</strong> = Talle 17 / 18<br>
-        • <strong>19.0 mm</strong> = Talle 20 / 21<br><br>
-        <em>Tip del Atelier:</em> Todas nuestras piezas incluyen el <strong>primer ajuste de talle sin costo</strong> con retiro y entrega asegurada.
-      `,
-      products: ringProds.slice(0, 3)
+      text: `Para conocer tu talle de anillo exacto en Argentina, el método más seguro es medir en milímetros el **diámetro interno** de un anillo que te calce perfecto (sin contar los bordes metálicos):\n\n• **16.5 mm** = Talle 12 / 13\n• **17.2 mm** = Talle 14 / 15 *(el estándar más frecuente)*\n• **18.0 mm** = Talle 17 / 18\n• **19.0 mm** = Talle 20 / 21\n\n**Garantía Áurea:** Todas nuestras creaciones incluyen el **primer ajuste de talle 100% bonificado** con retiro y entrega asegurada a domicilio en todo el país.`,
+      products: ringProds.slice(0, 3),
+      suggestions: ["Ver anillos en stock", "¿Cuánto demora el ajuste?", "Consultar por WhatsApp"]
     };
   }
 
-  // 2. Metales (Oro 18k, Oro Blanco, Plata 925)
+  // 3. Metales (Oro 18k macizo, Oro Blanco, Plata 925)
   if (query.includes('oro') || query.includes('plata') || query.includes('metal') || query.includes('quilate') || query.includes('18k') || query.includes('925') || query.includes('blanco')) {
     const metalProds = products.filter(p => query.includes('blanco') ? (p.metal && p.metal.toLowerCase().includes('blanco')) : (p.metal && p.metal.toLowerCase().includes('oro')));
     return {
-      text: `
-        En <strong>ÁUREA Atelier</strong> trabajamos exclusivamente con metales nobles macizos de primera ley:
-        <br><br>
-        • <strong>Oro 18K Amarillo Macizo (750‰):</strong> Nobleza eterna sin baños ni enchapados que se desprendan.<br>
-        • <strong>Oro Blanco 18K:</strong> Fina aleación con paladio que aporta un tono frío, luminoso y duradero.<br>
-        • <strong>Plata 925 de Ley:</strong> Forjada y pulida a mano con acabado espejo de alta orfebrería.<br><br>
-        Cada creación se entrega con su <strong>Certificado de Autenticidad</strong> y garantía perpetua de mantenimiento.
-      `,
-      products: (metalProds.length > 0 ? metalProds : products).slice(0, 3)
+      text: `En **ÁUREA Atelier** forjamos piezas exclusivamente en metales nobles macizos de primera ley:\n\n• **Oro 18K Amarillo Macizo (750‰):** Nobleza perpetua sin enchapados que se desprendan.\n• **Oro Blanco 18K:** Fina aleación con paladio y baño de rodio electrolítico que aporta un tono níveo y duradero.\n• **Plata 925 de Ley:** Forjada y pulida a mano con acabado espejo de alta orfebrería.\n\nCada creación se entrega con su **Certificado de Autenticidad** y garantía perpetua de mantenimiento.`,
+      products: (metalProds.length > 0 ? metalProds : products).slice(0, 3),
+      suggestions: ["Diferencia entre Oro Blanco y Amarillo", "¿Tienen garantía perpetua?", "Pulido anual sin costo"]
     };
   }
 
-  // 3. Diamantes & Gemas éticas
+  // 4. Diamantes cultivados & Gemas éticas
   if (query.includes('diamante') || query.includes('gema') || query.includes('piedra') || query.includes('brillante') || query.includes('cultivado') || query.includes('vvs')) {
     const diamondProds = products.filter(p => p.category === 'diamantes' || p.name.toLowerCase().includes('diamante') || p.name.toLowerCase().includes('étoile'));
     return {
-      text: `
-        Nuestros diamantes son <strong>cultivados en laboratorio con huella neutra</strong>. Tienen exactamente la misma composición atómica (100% carbono cristalizado), brillo y dureza 10 Mohs que un diamante extraído de mina.
-        <br><br>
-        Garantizamos pureza <strong>VVS</strong> y graduación incolora excepcional <strong>F-G</strong>, promoviendo una joyería de lujo consciente y de pureza certificada.
-      `,
-      products: diamondProds.slice(0, 3)
+      text: `Nuestros diamantes son **cultivados en laboratorio con huella de carbono neutra**. Tienen exactamente la misma composición atómica (100% carbono cristalizado), brillo y dureza 10 Mohs que un diamante de yacimiento.\n\nGarantizamos pureza **VVS1/VVS2** y escala incolora excepcional **F-G**, promoviendo un lujo contemporáneo, ético y de máxima pureza certificada.`,
+      products: diamondProds.slice(0, 3),
+      suggestions: ["¿Tienen certificación oficial?", "Ver Alta Joyería Diamantes", "Packaging de gala"]
     };
   }
 
-  // 4. Medios de pago y cuotas
+  // 5. Medios de pago y cuotas
   if (query.includes('pago') || query.includes('cuota') || query.includes('tarjeta') || query.includes('mercado pago') || query.includes('mercadopago') || query.includes('interes') || query.includes('transferencia') || query.includes('banco') || query.includes('descuento')) {
     return {
-      text: `
-        Contamos con los siguientes beneficios de pago en Argentina:
-        <br><br>
-        • <strong>3 y 6 Cuotas Sin Interés</strong> con tarjetas de crédito bancarias Visa, Mastercard y American Express procesadas por <strong>Mercado Pago</strong>.<br>
-        • <strong>15% de Descuento Especial</strong> abonando mediante Transferencia Bancaria directa (Alias: <code>AUREA.JOYAS.ARG</code>).<br>
-        • Pagos protegidos con encriptación de nivel bancario.
-      `,
-      products: products.slice(0, 2)
+      text: `Contamos con los siguientes beneficios de pago en Argentina:\n\n• **3 y 6 Cuotas Fijas Sin Interés** con tarjetas de crédito bancarias Visa, Mastercard y American Express procesadas por **Mercado Pago**.\n• **15% de Descuento Inmediato** abonando mediante Transferencia Bancaria directa (Alias: \`AUREA.JOYAS.ARG\`).\n• Facturación fiscal tipo A o B y pagos protegidos con encriptación bancaria de 256 bits.`,
+      products: products.slice(0, 2),
+      suggestions: ["¿Cómo accedo al 15% OFF?", "¿Cuánto demora el envío?", "Ver catálogo completo"]
     };
   }
 
-  // 5. Envíos y entregas
+  // 6. Envíos y entregas
   if (query.includes('envio') || query.includes('envíos') || query.includes('andreani') || query.includes('tiempo') || query.includes('demora') || query.includes('llega') || query.includes('costo') || query.includes('domicilio')) {
     return {
-      text: `
-        Brindamos <strong>Envío Gratis Asegurado</strong> a toda la República Argentina a través de <strong>Andreani</strong>:
-        <br><br>
-        • <strong>CABA y Gran Buenos Aires:</strong> 24 a 48 hs hábiles.<br>
-        • <strong>Resto del país:</strong> 3 a 5 días hábiles a domicilio o sucursal Andreani.<br>
-        • Se envía con código de seguimiento en tiempo real y packaging sellado de autor para absoluta discreción y custodia.
-      `,
-      products: []
+      text: `Brindamos **Envío Gratis Asegurado** a toda la República Argentina a través de **Andreani**:\n\n• **CABA y Gran Buenos Aires:** 24 a 48 hs hábiles.\n• **Resto del país:** 3 a 5 días hábiles a domicilio o sucursal Andreani con seguimiento satelital.\n• **Packaging de Gala:** Cada alhaja viaja en un cofre rígido forrado en lino, lazo de satén, estuche de viaje y certificado foliado.`,
+      products: [],
+      suggestions: ["¿El envío tiene seguro total?", "¿Cómo viene el packaging?", "Ver joyas disponibles"]
     };
   }
 
-  // 6. Cuidado y limpieza
+  // 7. Cuidado y limpieza
   if (query.includes('limpieza') || query.includes('limpiar') || query.includes('cuidado') || query.includes('mantener') || query.includes('mantenimiento')) {
     return {
-      text: `
-        Para preservar el resplandor de tus alhajas:<br><br>
-        • Lavá la pieza con agua tibia y jabón neutro, empleando un cepillo de cerdas ultrasuaves.<br>
-        • Secá suavemente con un paño de microfibra.<br>
-        • Evitá la exposición a cloro, piscinas y fragancias directas.<br><br>
-        Recordá que disponés de <strong>mantenimiento y pulido anual bonificado de por vida</strong> en nuestro atelier.
-      `,
-      products: []
+      text: `Para preservar el resplandor de tus joyas con rigor de orfebre:\n\n• Lavá la pieza con agua tibia y unas gotas de jabón neutro, empleando un cepillo de cerdas ultrasuaves.\n• Secá suavemente con un paño de microfibra.\n• Evitá la exposición a cloro, piscinas y fragancias directas.\n\n*Beneficio Áurea:* Recordá que disponés de **mantenimiento y pulido anual bonificado de por vida** en nuestro atelier central.`,
+      products: [],
+      suggestions: ["¿Cómo solicito el pulido anual?", "Ver joyas en Oro 18K", "Hablar con un orfebre"]
     };
   }
 
-  // 7. Regalos, ocasiones especiales o aniversarios
+  // 8. Regalos, ocasiones especiales o aniversarios
   if (query.includes('regalo') || query.includes('aniversario') || query.includes('novia') || query.includes('compromiso') || query.includes('cumple') || query.includes('recomendar') || query.includes('especial')) {
-    const featuredProds = products.filter(p => p.badge && (p.badge.toLowerCase().includes('exclusivo') || p.badge.toLowerCase().includes('más vendido') || p.badge.toLowerCase().includes('autor')));
+    const featuredProds = products.filter(p => p.badge && (p.badge.toLowerCase().includes('exclusivo') || p.badge.toLowerCase().includes('alta joyería') || p.badge.toLowerCase().includes('más vendido')));
     return {
-      text: `
-        Para agasajar en un momento inolvidable, te recomiendo nuestras piezas de silueta atemporal:
-        <br><br>
-        Cada joya se entrega lista para obsequiar en un estuche rígido forrado en lino, con lazo satinado, estuche de viaje y certificado de orfebrería.
-      `,
-      products: (featuredProds.length > 0 ? featuredProds : products).slice(0, 3)
+      text: `Para agasajar en un hito trascendental, te recomiendo nuestras creaciones de silueta atemporal:\n\nNuestros solitarios con diamantes cultivados y gargantillas finas se entregan listas para regalar con presentación de gala y cambio garantizado de talle sin costo.`,
+      products: (featuredProds.length > 0 ? featuredProds : products).slice(0, 3),
+      suggestions: ["Anillos de compromiso", "¿Cómo viene el packaging?", "Consultar por WhatsApp"]
     };
   }
 
-  // 8. Búsqueda por categorías específicas (aros, collares, pulseras, etc.)
+  // 9. Búsqueda por categorías específicas (aros, collares, pulseras, etc.)
   if (query.includes('aro') || query.includes('collar') || query.includes('pulsera') || query.includes('gargantilla') || query.includes('solitario')) {
     let catKey = 'todos';
     if (query.includes('aro')) catKey = 'aros';
@@ -1647,25 +1798,18 @@ function generateAIResponse(rawQuery) {
     const matched = products.filter(p => p.category === catKey || p.name.toLowerCase().includes(query));
     if (matched.length > 0) {
       return {
-        text: `Aquí tenés algunas de nuestras creaciones más destacadas de esa colección. Podés pulsar en <strong>"Ver"</strong> para inspeccionar los detalles de la pieza:`,
-        products: matched.slice(0, 3)
+        text: `Aquí tenés algunas de nuestras creaciones más destacadas de esa colección. Podés pulsar en **"Ver"** para inspeccionar detalles o en **"+ Bolsa"** para adquirirla directamente:`,
+        products: matched.slice(0, 3),
+        suggestions: ["Ver todas las piezas", "Calcular cuotas sin interés", "¿Tienen envío gratis?"]
       };
     }
   }
 
-  // 9. Respuesta amigable por defecto dentro del dominio de joyería
+  // 10. Respuesta por defecto
   return {
-    text: `
-      Como asesora de <strong>ÁUREA Atelier</strong>, puedo orientarte sobre:
-      <br><br>
-      • <strong>Talles y medidas</strong> exactas para anillos.<br>
-      • Diferencias entre <strong>Oro 18K, Oro Blanco y Plata 925</strong>.<br>
-      • Diamantes cultivados y gemas de autor.<br>
-      • Financiación en <strong>hasta 6 cuotas fijas sin interés</strong> y 15% OFF por transferencia.<br>
-      • Envíos gratis asegurados a todo el país.<br><br>
-      <em>¿Sobre qué pieza o detalle te gustaría profundizar?</em>
-    `,
-    products: products.slice(0, 2)
+    text: `Como asesora de **ÁUREA Atelier**, puedo orientarte sobre:\n\n• **Talles y medidas** exactas para anillos en milímetros.\n• Diferencias entre **Oro 18K Macizo, Oro Blanco y Plata 925**.\n• Diamantes cultivados éticos y gemas de autor.\n• Financiación en **hasta 6 cuotas fijas sin interés** y 15% OFF por transferencia.\n• Envíos gratis asegurados a todo el país.\n\n*¿Sobre qué pieza o detalle te gustaría profundizar?*`,
+    products: products.slice(0, 2),
+    suggestions: ["¿Cómo mido mi talle de anillo?", "Ver joyas en Oro 18K", "Beneficios de pago"]
   };
 }
 
