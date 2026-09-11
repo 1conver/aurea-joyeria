@@ -46,54 +46,77 @@
     </div>
   </div>
 
-  <!-- Cabecera Principal -->
-  <header class="site-header">
-    <div class="container header-inner">
-      <!-- Navegación Primaria Ampliada (Desktop) -->
-      <nav class="nav-links" aria-label="Navegación principal">
-        <a href="#catalogo" class="nav-item active" onclick="selectNavCategory('todos')">Colección</a>
-        <a href="#catalogo" class="nav-item" onclick="selectNavCategory('anillos')">Anillos</a>
-        <a href="#catalogo" class="nav-item" onclick="selectNavCategory('collares')">Collares</a>
-        <a href="#catalogo" class="nav-item" onclick="selectNavCategory('aros')">Aros</a>
-        <a href="#catalogo" class="nav-item" onclick="selectNavCategory('pulseras')">Pulseras</a>
-        <a href="#catalogo" class="nav-item" onclick="selectNavCategory('diamantes')">Diamantes</a>
-        <a href="#catalogo" class="nav-item" onclick="selectNavCategory('limitada')">Limitadas</a>
-        <a href="#atelier" class="nav-item">Atelier</a>
-      </nav>
-
-      <!-- Isotipo / Logotipo Editorial -->
-      <a href="/" class="brand-logo" aria-label="ÁUREA Atelier Inicio">
-        <div class="brand-title">ÁUREA</div>
-        <div class="brand-subtitle">Atelier Joaillerie · Buenos Aires</div>
-      </a>
-
-      <!-- Acciones de Usuario -->
-      <div class="header-actions">
-        <!-- Buscador sutil integrado -->
-        <div class="header-search-wrap">
-          <span style="color: var(--pastel-rose-deep); display: flex; align-items: center; margin-right: 0.4rem;" data-icon="search"></span>
-          <input type="text" id="header-search-input" placeholder="Buscar joya..." class="header-search-field">
+  <!-- Cabecera Principal Reestructurada con Proporciones de Alta Joyería -->
+  <header class="site-header" id="site-header">
+    <!-- Nivel Superior: Redes/Sello (Izq), Logotipo Central (Centro) y Acciones (Der) -->
+    <div class="header-top-bar">
+      <div class="container header-top-grid">
+        <!-- Zona Izquierda: Redes Sociales del Atelier y Sello de Ubicación -->
+        <div class="header-left-zone">
+          <div class="header-social-links" aria-label="Redes del atelier">
+            <a href="#" class="header-icon-btn" aria-label="Instagram Oficial" title="Instagram Oficial" onclick="event.preventDefault(); showToast('Instagram Oficial: Enlace disponible próximamente');">
+              <span data-icon="instagram"></span>
+            </a>
+            <a href="#" class="header-icon-btn" aria-label="WhatsApp Asesoría" title="WhatsApp Asesoría" onclick="event.preventDefault(); showToast('WhatsApp de Asesoría: Enlace disponible próximamente');">
+              <span data-icon="whatsapp"></span>
+            </a>
+          </div>
+          <div class="header-location-tag">
+            <span class="location-pulse-dot"></span>
+            <span>Recoleta · Buenos Aires</span>
+          </div>
         </div>
 
-        <!-- Redes Sociales Rápidas -->
-        <div class="header-social-links" aria-label="Redes del atelier">
-          <a href="#" class="header-icon-btn" aria-label="Instagram Oficial" title="Instagram Oficial" onclick="event.preventDefault(); showToast('Instagram Oficial: Enlace disponible próximamente');">
-            <span data-icon="instagram"></span>
-          </a>
-          <a href="#" class="header-icon-btn" aria-label="WhatsApp Asesoría" title="WhatsApp Asesoría" onclick="event.preventDefault(); showToast('WhatsApp de Asesoría: Enlace disponible próximamente');">
-            <span data-icon="whatsapp"></span>
+        <!-- Zona Central: Logotipo de Marca Proporcional y Absolutamente Centrado -->
+        <div class="header-center-zone">
+          <a href="/" class="brand-logo" aria-label="ÁUREA Atelier Inicio">
+            <span class="brand-title">ÁUREA</span>
+            <span class="brand-subtitle">Atelier Joaillerie · Buenos Aires</span>
           </a>
         </div>
 
-        <!-- Botón de Bolsa de Compras -->
-        <button class="header-btn btn-open-cart" aria-label="Abrir bolsa de compras">
-          <span data-icon="bag"></span>
-          <span class="cart-count-badge" style="display: none;">0</span>
-        </button>
+        <!-- Zona Derecha: Buscador de Lujo y Bolsa de Compras -->
+        <div class="header-right-zone">
+          <!-- Buscador Elegante con Expansión Dinámica -->
+          <div class="header-search-wrap">
+            <span class="header-search-icon" data-icon="search"></span>
+            <input type="text" id="header-search-input" placeholder="Buscar joya o gema..." class="header-search-field" autocomplete="off">
+          </div>
+
+          <!-- Botón de Bolsa de Compras con Micro-insignia -->
+          <button class="header-btn btn-open-cart" aria-label="Abrir bolsa de compras" title="Bolsa de compras">
+            <span data-icon="bag"></span>
+            <span class="cart-count-badge" style="display: none;">0</span>
+          </button>
+        </div>
       </div>
     </div>
 
-    <!-- Franja deslizable de Categorías para Celulares (Swipe Touch Rápido) -->
+    <!-- Nivel Inferior: Franja de Navegación Editorial con Espaciado Generoso (Desktop) -->
+    <div class="header-nav-bar">
+      <div class="container">
+        <nav class="nav-links" aria-label="Navegación principal">
+          <a href="#catalogo" class="nav-item active" onclick="selectNavCategory('todos')">Colección</a>
+          <a href="#catalogo" class="nav-item" onclick="selectNavCategory('anillos')">Anillos</a>
+          <a href="#catalogo" class="nav-item" onclick="selectNavCategory('collares')">Collares</a>
+          <a href="#catalogo" class="nav-item" onclick="selectNavCategory('aros')">Aros</a>
+          <a href="#catalogo" class="nav-item" onclick="selectNavCategory('pulseras')">Pulseras</a>
+          <a href="#catalogo" class="nav-item" onclick="selectNavCategory('diamantes')">Diamantes</a>
+          <a href="#catalogo" class="nav-item" onclick="selectNavCategory('limitada')">Edición Limitada</a>
+          <a href="#atelier" class="nav-item">El Atelier</a>
+        </nav>
+      </div>
+    </div>
+
+    <!-- Buscador Integrado para Móvil (Nunca se superpone ni compacta) -->
+    <div class="mobile-search-bar" aria-label="Búsqueda en móvil">
+      <div class="header-search-wrap mobile-search-inner">
+        <span class="header-search-icon" data-icon="search"></span>
+        <input type="text" id="header-search-input-mobile" placeholder="Buscar alhaja, anillo, oro..." class="header-search-field" autocomplete="off">
+      </div>
+    </div>
+
+    <!-- Franja Deslizable de Categorías para Celulares (Swipe Touch Rápido) -->
     <div class="mobile-cat-strip" aria-label="Categorías rápidas para móvil">
       <button class="mobile-cat-pill active" onclick="selectNavCategory('todos')">Todas</button>
       <button class="mobile-cat-pill" onclick="selectNavCategory('anillos')">Anillos</button>

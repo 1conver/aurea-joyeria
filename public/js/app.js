@@ -1218,18 +1218,28 @@ function setupEventListeners() {
     });
   }
 
-  // Búsqueda
-  const searchInput = document.getElementById('header-search-input');
-  if (searchInput) {
+  // Búsqueda en Cabecera (Soporte Desktop y Móvil Sincronizado)
+  const searchInputDesktop = document.getElementById('header-search-input');
+  const searchInputMobile = document.getElementById('header-search-input-mobile');
+
+  function bindSearchInput(inputEl, otherInputEl) {
+    if (!inputEl) return;
     let timeout = null;
-    searchInput.addEventListener('input', (e) => {
+    inputEl.addEventListener('input', (e) => {
       clearTimeout(timeout);
+      const val = e.target.value;
+      if (otherInputEl && otherInputEl.value !== val) {
+        otherInputEl.value = val;
+      }
       timeout = setTimeout(() => {
-        AppState.searchQuery = e.target.value;
+        AppState.searchQuery = val;
         fetchProducts();
       }, 350);
     });
   }
+
+  bindSearchInput(searchInputDesktop, searchInputMobile);
+  bindSearchInput(searchInputMobile, searchInputDesktop);
 
   // Cerrar modal al cliquear en overlay exterior
   const quickviewOverlay = document.getElementById('quickview-modal-overlay');

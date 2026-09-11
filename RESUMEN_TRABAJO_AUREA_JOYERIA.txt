@@ -443,6 +443,41 @@ ACTUALIZACIÓN: CORRECCIÓN LOGO WHATSAPP & IA CON GUARDRAIL ESTRICTO DE JOYERÍ
 
 
 ================================================================================
+ACTUALIZACIÓN: REARQUITECTURA & PROPORCIONES DEL TOOLBAR SUPERIOR
+================================================================================
+1. Descompresión y Reorganización Editorial en Dos Niveles (Alta Joyería):
+   - Problema previo: En una sola fila de 80px convivían 8 enlaces de texto, el logo central,
+     el buscador, las redes sociales y el carrito, provocando colisión horizontal ("compactado")
+     y descentrado del logotipo en monitores estándar y laptops.
+   - Solución de Dos Niveles de Lujo:
+     * Fila 1 (Nivel Principal - 76px):
+       - Cuadrícula de 3 columnas simétricas (1fr auto 1fr).
+       - Izquierda: Botones boutique de Instagram y WhatsApp con sello "Recoleta · Buenos Aires".
+       - Centro: Logotipo de marca ÁUREA (2.25rem con letter-spacing 0.32em) con subtítulo en rosa
+         pastel profundo, 100% centrado matemáticamente respecto al viewport.
+       - Derecha: Buscador elegante de cápsula blanca con micro-animación de expansión al foco
+         (165px -> 220px) y botón de bolsa de compras con insignia pastel.
+     * Fila 2 (Franja de Navegación Editorial - 46px):
+       - Fila horizontal independiente con espaciado generoso (2.8rem de separación).
+       - Tipografía depurada (0.78rem, letter-spacing 0.16em, peso 600) con subrayado satinado
+         al pasar el cursor y selección de categoría activa.
+       - Desaparece la saturación visual y el contenido respira armónicamente.
+
+2. Cintillo Superior de Anuncios (.top-ticker):
+   - Tipografía micro-ajustada (0.72rem, letter-spacing 0.16em) con separadores vectoriales
+     de destello SVG y mayor separación entre frases destacadas (3.2rem).
+   - Insignia de 15% OFF refinada con micro-sombra y bordes suaves.
+
+3. Adaptabilidad Responsiva para Móvil (< 900px):
+   - Distribución limpia: Redes sociales a la izquierda, logotipo estilizado al centro y carrito
+     a la derecha.
+   - Fila de búsqueda dedicada a ancho completo (mobile-search-bar) para máxima comodidad táctil,
+     sin apretujarse contra el logotipo ni los botones.
+   - Sincronización en tiempo real entre los campos de búsqueda móvil y de escritorio en app.js.
+   - Franja táctil deslizable de categorías con pastillas confortables para el pulgar.
+
+
+================================================================================
 5. CÓMO EJECUTAR LOCALMENTE
 ================================================================================
 1. Abrir PowerShell en Windows
@@ -456,4 +491,5 @@ ACTUALIZACIÓN: CORRECCIÓN LOGO WHATSAPP & IA CON GUARDRAIL ESTRICTO DE JOYERÍ
 ================================================================================
 FIN DEL ARCHIVO
 ================================================================================
+
 
