@@ -28,13 +28,13 @@
 
       <form id="admin-login-form">
         <div class="form-group" style="text-align: left; margin-bottom: 1.2rem;">
-          <label class="form-label">Correo Electrónico Institucional</label>
-          <input type="email" id="login-email" class="form-input" placeholder="usuario@aurea-joyeria.com" required value="admin@aurea-joyeria.com">
+          <label class="form-label">Usuario o Correo Institucional</label>
+          <input type="text" id="login-email" class="form-input" placeholder="Ingresá tu usuario..." autocomplete="username" required value="">
         </div>
 
         <div class="form-group" style="text-align: left; margin-bottom: 1.8rem;">
           <label class="form-label">Contraseña</label>
-          <input type="password" id="login-password" class="form-input" placeholder="••••••••" required value="aurea2026">
+          <input type="password" id="login-password" class="form-input" placeholder="••••••••" autocomplete="current-password" required value="">
         </div>
 
         <button type="submit" class="btn-luxury" style="width: 100%;" id="btn-submit-login">
@@ -42,28 +42,6 @@
           <span>Ingresar al Sistema</span>
         </button>
       </form>
-
-      <!-- Botones de Prueba Rápida de Roles -->
-      <div class="login-quick-roles">
-        <div style="font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); font-weight: 600;">
-          Accesos de Demostración:
-        </div>
-        <button type="button" class="quick-role-btn" onclick="fillLogin('admin@aurea-joyeria.com', 'aurea2026')">
-          <div>
-            <strong style="display: block; color: var(--text-primary);">Director General (Admin)</strong>
-            <span>Control total: Catálogo, Textos, Ofertas y Operarios</span>
-          </div>
-          <span style="color: var(--gold-dark); font-weight: 700;">Cargar</span>
-        </button>
-
-        <button type="button" class="quick-role-btn" onclick="fillLogin('taller@aurea-joyeria.com', 'taller123')">
-          <div>
-            <strong style="display: block; color: var(--text-primary);">Maestro Orfebre (Operario)</strong>
-            <span>Enfocado en Taller, Preparación y Logística Andreani</span>
-          </div>
-          <span style="color: var(--gold-dark); font-weight: 700;">Cargar</span>
-        </button>
-      </div>
 
       <div style="margin-top: 2rem;">
         <a href="/" target="_blank" style="font-size: 0.75rem; color: var(--text-muted); text-decoration: underline;">

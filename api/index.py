@@ -43,10 +43,10 @@ def load_data(filename, default_val=None):
 ACTIVE_SESSIONS = {
     "admin_default_token": {
         "id": "USR-001",
-        "name": "Santiago Albarracín",
-        "email": "admin@aurea-joyeria.com",
+        "name": "Bren",
+        "email": "bren@aurea-joyeria.com",
         "role": "admin",
-        "role_label": "Administrador General & Dirección"
+        "role_label": "Administradora General & Dirección"
     }
 }
 
@@ -207,17 +207,17 @@ class handler(BaseHTTPRequestHandler):
 
         # POST /api/auth/login
         if path == "/api/auth/login":
-            email = body.get("email", "").strip().lower()
+            login_id = body.get("email", "").strip().lower()
             password = body.get("password", "").strip()
             users = load_data("users.json", [])
-            user = next((u for u in users if u.get("email", "").lower() == email and u.get("password") == password), None)
+            user = next((u for u in users if (u.get("email", "").lower() == login_id or u.get("username", "").lower() == login_id) and u.get("password") == password), None)
 
             if not user:
-                # Acceso rápido por defecto para demo
-                if email == "admin@aurea-joyeria.com" and password == "aurea2026":
-                    user = {"id": "USR-001", "name": "Santiago Albarracín", "email": email, "role": "admin", "role_label": "Administrador General"}
-                elif email == "taller@aurea-joyeria.com" and password == "taller123":
-                    user = {"id": "USR-002", "name": "Martín Benítez", "email": email, "role": "operario", "role_label": "Maestro Orfebre & Logística"}
+                # Verificación directa de credenciales oficiales
+                if login_id in ("bren", "bren@aurea-joyeria.com") and password == "brenpea":
+                    user = {"id": "USR-001", "name": "Bren", "email": "bren@aurea-joyeria.com", "role": "admin", "role_label": "Administradora General & Dirección"}
+                elif login_id in ("taller", "taller@aurea-joyeria.com") and password == "taller123":
+                    user = {"id": "USR-002", "name": "Martín Benítez", "email": "taller@aurea-joyeria.com", "role": "operario", "role_label": "Maestro Orfebre & Logística"}
 
             if not user:
                 self._set_headers(401)

@@ -26,16 +26,19 @@ República Argentina:
 2. CREDENCIALES DE ACCESO AL PANEL (/admin)
 --------------------------------------------------------------------------------
 Panel local: http://localhost:3000/admin
+Despliegue: /admin
 
-A) DIRECTOR GENERAL (ADMINISTRADOR)
-   - Correo: admin@aurea-joyeria.com
-   - Contraseña: aurea2026
-   - Permisos: Acceso total a los 4 módulos (Taller, Catálogo, Ofertas y Cuentas).
+A) DIRECCIÓN GENERAL (ADMINISTRADOR OFICIAL)
+   - Usuario: bren
+   - Contraseña: brenpea
+   - Correo alternativo: bren@aurea-joyeria.com
+   - Permisos: Acceso total a los 4 módulos (Taller, Catálogo, Ofertas y Personal).
+   - Formulario de login: Entra limpio sin autocompletar credenciales en pantalla.
 
 B) MAESTRO ORFEBRE (OPERARIO)
-   - Correo: taller@aurea-joyeria.com
+   - Usuario: taller (o taller@aurea-joyeria.com)
    - Contraseña: taller123
-   - Permisos: Acceso exclusivo a Taller, Ajuste de Medidas y Despachos Andreani.
+   - Permisos: Acceso a Taller, Ajuste de Medidas y Despachos Andreani.
 
 
 3. ESTRUCTURA DE ARCHIVOS EN TU PC

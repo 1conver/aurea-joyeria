@@ -1,11 +1,12 @@
 [
   {
     "id": "USR-001",
-    "name": "Santiago Albarracín",
-    "email": "admin@aurea-joyeria.com",
-    "password": "aurea2026",
+    "name": "Bren",
+    "username": "bren",
+    "email": "bren@aurea-joyeria.com",
+    "password": "brenpea",
     "role": "admin",
-    "role_label": "Administrador General & Dirección",
+    "role_label": "Administradora General & Dirección",
     "created_at": "01/08/2026"
   },
   {

@@ -61,6 +61,10 @@ async function checkAuth() {
 function showLoginView() {
   document.getElementById('login-view').style.display = 'flex';
   document.getElementById('dashboard-view').style.display = 'none';
+  const emailInput = document.getElementById('login-email');
+  const passInput = document.getElementById('login-password');
+  if (emailInput) emailInput.value = '';
+  if (passInput) passInput.value = '';
 }
 
 function showDashboardView() {
