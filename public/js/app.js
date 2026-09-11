@@ -1419,7 +1419,7 @@ function initAIChatAdvisor() {
       messagesEl.innerHTML = `
         <div class="chat-msg bot-msg">
           <div class="msg-bubble">
-            ¡Hola de nuevo! Conversación reiniciada. ¿En qué pieza o inquietud de joyería puedo orientarte hoy?
+            ¡Conversación reiniciada! ¿Qué diseño o detalle te gustaría descubrir hoy?
           </div>
           <span class="msg-time">Ahora</span>
         </div>
@@ -1683,133 +1683,376 @@ function initAIChatAdvisor() {
 // Patrones de detección para temas ajenos a la joyería (Guardrail Estricto)
 const OFF_TOPIC_REGEX = /\b(python|javascript|typescript|react|html|css|php|java|c\+\+|sql|codigo|código|programar|programacion|programación|script|bug|api|backend|frontend|futbol|fútbol|messi|maradona|river|boca|partido|mundial|champions|gol|deporte|tenis|nba|politica|política|presidente|elecciones|gobierno|milei|cristina|macri|receta|cocinar|torta|brownie|pasta|asado|horno|matematica|matemática|ecuacion|ecuación|raiz cuadrada|derivada|calcular|cuanto es|clima|pronostico|pronóstico|temperatura|va a llover|chiste|broma|cuento|pelicula|película|serie|netflix|spotify|cancion|canción)\b/i;
 
-const JEWELRY_REGEX = /\b(joya|joyas|joyería|joyeria|anillo|anillos|alianza|alianzas|solitario|collar|collares|gargantilla|aros|arito|aritos|argolla|pulsera|pulseras|brazalete|oro|plata|platino|rodio|quilate|quilates|18k|925|diamante|diamantes|gema|gemas|piedra|piedras|brillante|zafiro|esmeralda|rubi|rubí|perla|talle|talles|talla|medida|medir|milimetro|milímetro|mm|dedo|compra|comprar|precio|costo|valor|cuota|cuotas|tarjeta|mercado pago|mercadopago|transferencia|descuento|banco|envio|envios|envíos|andreani|entrega|demora|despacho|retiro|taller|atelier|alvear|aurea|áurea|regalo|regalos|aniversario|compromiso|casamiento|boda|novia|novio|limpieza|limpiar|cuidado|mantenimiento|garantia|garantía|certificado|presupuesto|barato|accesible|exclusivo)\b/i;
+const JEWELRY_CONTEXT_WORDS = [
+  'joya', 'joyas', 'joyeria', 'anillo', 'anillos', 'solitario', 'solitarios', 'alianza', 'alianzas',
+  'collar', 'collares', 'gargantilla', 'gargantillas', 'cadena', 'cadenas', 'dije', 'dijes', 'colgante',
+  'aro', 'aros', 'arito', 'aritos', 'argolla', 'argollas', 'criollo', 'criollos',
+  'pulsera', 'pulseras', 'brazalete', 'brazaletes', 'riviere', 'esclava',
+  'oro', 'plata', 'platino', 'rodio', 'quilate', 'quilates', '18k', '925',
+  'diamante', 'diamantes', 'gema', 'gemas', 'piedra', 'piedras', 'brillante', 'brillantes', 'zafiro', 'esmeralda', 'rubi', 'perla', 'perlas',
+  'talle', 'talles', 'talla', 'medida', 'medidas', 'medir', 'diametro', 'milimetro', 'mm', 'dedo',
+  'precio', 'precios', 'cuanto sale', 'cuanto cuesta', 'costo', 'costos', 'presupuesto', 'barato', 'accesible', 'caro', 'exclusivo',
+  'pago', 'pagos', 'cuota', 'cuotas', 'tarjeta', 'tarjetas', 'mercado pago', 'mercadopago', 'transferencia', 'descuento', '15%', 'banco',
+  'envio', 'envios', 'andreani', 'tiempo', 'demora', 'entrega', 'despacho', 'retiro',
+  'taller', 'atelier', 'alvear', 'aurea', 'direccion', 'donde estan', 'donde queda', 'visitar', 'cita', 'horario', 'local', 'tienda',
+  'regalo', 'regalos', 'aniversario', 'compromiso', 'casamiento', 'boda', 'novia', 'mama', 'esposa',
+  'limpieza', 'limpiar', 'cuidado', 'mantenimiento', 'garantia', 'certificado', 'autenticidad', 'pulido',
+  'personalizado', 'personalizados', 'a medida', 'grabar', 'grabado', 'stock', 'como compro', 'contacto', 'whatsapp',
+  'cambio', 'cambios', 'devolucion', 'devoluciones', 'mojar', 'agua', 'circon', 'zirconia', 'catalogo', 'quienes son', 'historia', 'sobre ustedes'
+];
 
-function extractBudgetJS(query) {
-  const q = query.toLowerCase().replace(/\./g, '').replace(/,/g, '');
-  const matchMil = q.match(/(\d+)\s*(mil|k)/);
+function normalizeText(text) {
+  if (!text) return '';
+  let s = text.toLowerCase().trim();
+  const map = {
+    'á': 'a', 'é': 'e', 'í': 'i', 'ó': 'o', 'ú': 'u', 'ü': 'u',
+    'à': 'a', 'è': 'e', 'ì': 'i', 'ò': 'o', 'ù': 'u'
+  };
+  s = s.replace(/[áéíóúüàèìòù]/g, m => map[m] || m);
+  s = s.replace(/[¿?¡!():;"',.\-_]/g, ' ');
+  return s.replace(/\s+/g, ' ').trim();
+}
+
+function isOffTopicJS(rawQuery) {
+  const norm = normalizeText(rawQuery);
+  if (JEWELRY_CONTEXT_WORDS.some(k => norm.includes(k))) return false;
+  if (['hola', 'buen dia', 'buenas tardes', 'buenas noches', 'buenas', 'gracias', 'adios', 'chau', 'que tal', 'como estas', 'de diez', 'genial', 'perfecto'].some(k => norm.includes(k))) return false;
+  return OFF_TOPIC_REGEX.test(norm);
+}
+
+function extractBudgetJS(rawQuery) {
+  const norm = normalizeText(rawQuery).replace(/\./g, '').replace(/,/g, '');
+  const matchMil = norm.match(/(\d+)\s*(mil|k)/);
   if (matchMil) return parseInt(matchMil[1], 10) * 1000;
-  const matchNum = q.match(/\$?\s*(\d{4,7})/);
+  const matchNum = norm.match(/\$?\s*(\d{4,7})/);
   if (matchNum) return parseInt(matchNum[1], 10);
   return null;
 }
 
+function matchProductsJS(rawQuery, products = []) {
+  if (!products || products.length === 0) return [];
+  const norm = normalizeText(rawQuery);
+  const budget = extractBudgetJS(rawQuery);
+
+  if (budget) {
+    const budgetProds = products.filter(p => p.price <= budget).sort((a, b) => b.price - a.price);
+    if (budgetProds.length > 0) return budgetProds.slice(0, 3);
+  }
+
+  if (['aro', 'aros', 'arito', 'aritos', 'argolla', 'argollas', 'criollo', 'criollos'].some(k => norm.includes(k))) {
+    const matched = products.filter(p => p.category === 'aros');
+    if (matched.length > 0) return matched.slice(0, 3);
+  }
+
+  if (['collar', 'collares', 'gargantilla', 'gargantillas', 'cadena', 'cadenas', 'dije', 'dijes', 'colgante'].some(k => norm.includes(k))) {
+    const matched = products.filter(p => p.category === 'collares');
+    if (matched.length > 0) return matched.slice(0, 3);
+  }
+
+  if (['pulsera', 'pulseras', 'brazalete', 'brazaletes', 'riviere', 'esclava'].some(k => norm.includes(k))) {
+    const matched = products.filter(p => p.category === 'pulseras');
+    if (matched.length > 0) return matched.slice(0, 3);
+  }
+
+  if (['compromiso', 'casamiento', 'boda', 'alianza', 'alianzas', 'pedida', 'matrimonio'].some(k => norm.includes(k))) {
+    const matched = products.filter(p => p.category === 'anillos' || normalizeText(p.name).includes('solitario') || p.badge === 'Alta Joyería');
+    if (matched.length > 0) return matched.slice(0, 3);
+  }
+
+  if (['diamante', 'diamantes', 'brillante', 'vvs', 'gema'].some(k => norm.includes(k))) {
+    const matched = products.filter(p => p.category === 'diamantes' || normalizeText(p.name).includes('diamante') || p.badge === 'Alta Joyería');
+    if (matched.length > 0) return matched.slice(0, 3);
+  }
+
+  if (['oro blanco', 'blanco'].some(k => norm.includes(k))) {
+    const matched = products.filter(p => p.metal && normalizeText(p.metal).includes('blanco'));
+    if (matched.length > 0) return matched.slice(0, 3);
+  }
+
+  if (['oro amarillo', 'oro 18k', 'oro'].some(k => norm.includes(k))) {
+    const matched = products.filter(p => p.metal && normalizeText(p.metal).includes('oro'));
+    if (matched.length > 0) return matched.slice(0, 3);
+  }
+
+  if (['plata', '925'].some(k => norm.includes(k))) {
+    const matched = products.filter(p => p.metal && normalizeText(p.metal).includes('plata'));
+    if (matched.length > 0) return matched.slice(0, 3);
+  }
+
+  if (['anillo', 'anillos', 'solitario'].some(k => norm.includes(k))) {
+    const matched = products.filter(p => p.category === 'anillos');
+    if (matched.length > 0) return matched.slice(0, 3);
+  }
+
+  if (['barato', 'economico', 'accesible', 'menor precio'].some(k => norm.includes(k))) {
+    const sorted = [...products].sort((a, b) => a.price - b.price);
+    return sorted.slice(0, 3);
+  }
+
+  if (['exclusivo', 'alta gama', 'alta joyeria', 'mas caro'].some(k => norm.includes(k))) {
+    const sorted = [...products].sort((a, b) => b.price - a.price);
+    return sorted.slice(0, 3);
+  }
+
+  const featured = products.filter(p => p.featured);
+  return (featured.length > 0 ? featured : products).slice(0, 3);
+}
+
 function generateAIResponse(rawQuery) {
-  const query = rawQuery.toLowerCase().trim();
+  const norm = normalizeText(rawQuery);
   const products = AppState.products || [];
-  const budget = extractBudgetJS(query);
+  const budget = extractBudgetJS(rawQuery);
+  const matched = matchProductsJS(rawQuery, products);
 
-  // GUARDRAIL ESTRICTO: Rechazar de inmediato cualquier consulta ajena a la joyería
-  const hasJewelry = JEWELRY_REGEX.test(query);
-  const isOffTopic = OFF_TOPIC_REGEX.test(query);
-
-  if (isOffTopic && !hasJewelry) {
+  // 1. Guardrail para temas ajenos a la joyería
+  if (isOffTopicJS(rawQuery)) {
     return {
-      text: `Disculpas, como asesora de **ÁUREA Atelier** estoy capacitada única y exclusivamente para orientarte sobre nuestras piezas de joyería fina, metales nobles, gemología, talles y compras en el atelier.\n\n¿En qué pieza o inquietud de joyería puedo ayudarte hoy?`,
+      text: `Disculpas, como asesora de **ÁUREA Atelier** me dedico exclusivamente a orientarte sobre nuestras piezas de joyería fina, metales nobles, gemología, talles y compras en el atelier.\n\nPodés consultarme sobre anillos, aros, collares, cómo medir tu talle de anillo o nuestras facilidades de pago en cuotas sin interés.`,
       products: [],
       suggestions: ["¿Cómo elijo mi talle de anillo?", "Ver joyas en Oro 18K", "Promociones y Cuotas"]
     };
   }
 
-  // 1. Presupuesto explícito del cliente
-  if (budget) {
-    const budgetProds = products.filter(p => p.price <= budget).sort((a, b) => b.price - a.price);
+  // 2. Saludos de cortesía
+  if (['hola', 'buen dia', 'buenas tardes', 'buenas noches', 'que tal', 'como estas', 'buenas'].some(k => norm.includes(k)) && norm.split(' ').length <= 4) {
     return {
-      text: `Para tu presupuesto de hasta **${formatARS(budget)}**, seleccioné las mejores creaciones forjadas en metales nobles con garantía perpetua:\n\nRecordá que podés abonar en **3 y 6 cuotas fijas sin interés** con tarjetas bancarias o acceder a un **15% de descuento directo** por transferencia bancaria.`,
-      products: (budgetProds.length > 0 ? budgetProds : products).slice(0, 3),
-      suggestions: ["Calcular cuotas sin interés", "¿Tienen envío gratis?", "Ver más opciones"]
+      text: `¡Hola! Qué gusto saludarte. Te doy una cálida bienvenida a **ÁUREA Atelier**.\n\nSoy tu asesora virtual de alta orfebrería y gemología. Puedo orientarte en la elección de piezas según tu estilo o presupuesto, ayudarte a medir tu talle de anillo con exactitud o detallarte nuestras facilidades de pago en hasta **6 cuotas fijas sin interés** y envíos asegurados por Andreani.\n\n¿Te gustaría explorar alguna colección en particular?`,
+      products: matched,
+      suggestions: ["Ver Anillos y Solitarios", "¿Cómo mido mi talle?", "Joyas en Oro 18K"]
     };
   }
 
-  // 2. Talles de anillo y medidas (Tabla métrica argentina)
-  if (query.includes('talle') || query.includes('talla') || query.includes('medir') || query.includes('medida') || query.includes('dedo') || query.includes('anillo')) {
-    const ringProds = products.filter(p => p.category === 'anillos' || p.name.toLowerCase().includes('anillo') || p.name.toLowerCase().includes('solitario'));
+  // 3. Agradecimientos y despedidas
+  if (['gracias', 'muchas gracias', 'genial', 'perfecto', 'chau', 'adios', 'hasta luego', 'muy amable', 'de diez', 'excelente'].some(k => norm.includes(k))) {
     return {
-      text: `Para conocer tu talle de anillo exacto en Argentina, el método más seguro es medir en milímetros el **diámetro interno** de un anillo que te calce perfecto (sin contar los bordes metálicos):\n\n• **16.5 mm** = Talle 12 / 13\n• **17.2 mm** = Talle 14 / 15 *(el estándar más frecuente)*\n• **18.0 mm** = Talle 17 / 18\n• **19.0 mm** = Talle 20 / 21\n\n**Garantía Áurea:** Todas nuestras creaciones incluyen el **primer ajuste de talle 100% bonificado** con retiro y entrega asegurada a domicilio en todo el país.`,
-      products: ringProds.slice(0, 3),
-      suggestions: ["Ver anillos en stock", "¿Cuánto demora el ajuste?", "Consultar por WhatsApp"]
-    };
-  }
-
-  // 3. Metales (Oro 18k macizo, Oro Blanco, Plata 925)
-  if (query.includes('oro') || query.includes('plata') || query.includes('metal') || query.includes('quilate') || query.includes('18k') || query.includes('925') || query.includes('blanco')) {
-    const metalProds = products.filter(p => query.includes('blanco') ? (p.metal && p.metal.toLowerCase().includes('blanco')) : (p.metal && p.metal.toLowerCase().includes('oro')));
-    return {
-      text: `En **ÁUREA Atelier** forjamos piezas exclusivamente en metales nobles macizos de primera ley:\n\n• **Oro 18K Amarillo Macizo (750‰):** Nobleza perpetua sin enchapados que se desprendan.\n• **Oro Blanco 18K:** Fina aleación con paladio y baño de rodio electrolítico que aporta un tono níveo y duradero.\n• **Plata 925 de Ley:** Forjada y pulida a mano con acabado espejo de alta orfebrería.\n\nCada creación se entrega con su **Certificado de Autenticidad** y garantía perpetua de mantenimiento.`,
-      products: (metalProds.length > 0 ? metalProds : products).slice(0, 3),
-      suggestions: ["Diferencia entre Oro Blanco y Amarillo", "¿Tienen garantía perpetua?", "Pulido anual sin costo"]
-    };
-  }
-
-  // 4. Diamantes cultivados & Gemas éticas
-  if (query.includes('diamante') || query.includes('gema') || query.includes('piedra') || query.includes('brillante') || query.includes('cultivado') || query.includes('vvs')) {
-    const diamondProds = products.filter(p => p.category === 'diamantes' || p.name.toLowerCase().includes('diamante') || p.name.toLowerCase().includes('étoile'));
-    return {
-      text: `Nuestros diamantes son **cultivados en laboratorio con huella de carbono neutra**. Tienen exactamente la misma composición atómica (100% carbono cristalizado), brillo y dureza 10 Mohs que un diamante de yacimiento.\n\nGarantizamos pureza **VVS1/VVS2** y escala incolora excepcional **F-G**, promoviendo un lujo contemporáneo, ético y de máxima pureza certificada.`,
-      products: diamondProds.slice(0, 3),
-      suggestions: ["¿Tienen certificación oficial?", "Ver Alta Joyería Diamantes", "Packaging de gala"]
-    };
-  }
-
-  // 5. Medios de pago y cuotas
-  if (query.includes('pago') || query.includes('cuota') || query.includes('tarjeta') || query.includes('mercado pago') || query.includes('mercadopago') || query.includes('interes') || query.includes('transferencia') || query.includes('banco') || query.includes('descuento')) {
-    return {
-      text: `Contamos con los siguientes beneficios de pago en Argentina:\n\n• **3 y 6 Cuotas Fijas Sin Interés** con tarjetas de crédito bancarias Visa, Mastercard y American Express procesadas por **Mercado Pago**.\n• **15% de Descuento Inmediato** abonando mediante Transferencia Bancaria directa (Alias: \`AUREA.JOYAS.ARG\`).\n• Facturación fiscal tipo A o B y pagos protegidos con encriptación bancaria de 256 bits.`,
-      products: products.slice(0, 2),
-      suggestions: ["¿Cómo accedo al 15% OFF?", "¿Cuánto demora el envío?", "Ver catálogo completo"]
-    };
-  }
-
-  // 6. Envíos y entregas
-  if (query.includes('envio') || query.includes('envíos') || query.includes('andreani') || query.includes('tiempo') || query.includes('demora') || query.includes('llega') || query.includes('costo') || query.includes('domicilio')) {
-    return {
-      text: `Brindamos **Envío Gratis Asegurado** a toda la República Argentina a través de **Andreani**:\n\n• **CABA y Gran Buenos Aires:** 24 a 48 hs hábiles.\n• **Resto del país:** 3 a 5 días hábiles a domicilio o sucursal Andreani con seguimiento satelital.\n• **Packaging de Gala:** Cada alhaja viaja en un cofre rígido forrado en lino, lazo de satén, estuche de viaje y certificado foliado.`,
+      text: `¡Ha sido un verdadero placer asesorarte! Recordá que podés consultarme en cualquier momento o comunicarte directamente con nuestro atelier por WhatsApp si querés coordinar una visita privada o diseñar una joya personalizada.\n\n¡Que tengas una hermosa jornada!`,
       products: [],
-      suggestions: ["¿El envío tiene seguro total?", "¿Cómo viene el packaging?", "Ver joyas disponibles"]
+      suggestions: ["Ver Catálogo Completo", "WhatsApp del Atelier", "Reiniciar Consulta"]
     };
   }
 
-  // 7. Cuidado y limpieza
-  if (query.includes('limpieza') || query.includes('limpiar') || query.includes('cuidado') || query.includes('mantener') || query.includes('mantenimiento')) {
+  // 4. Quiénes son / Sobre la marca / Historia
+  if (['quienes son', 'quien sos', 'sobre ustedes', 'marca aurea', 'historia', 'que es aurea'].some(k => norm.includes(k))) {
     return {
-      text: `Para preservar el resplandor de tus joyas con rigor de orfebre:\n\n• Lavá la pieza con agua tibia y unas gotas de jabón neutro, empleando un cepillo de cerdas ultrasuaves.\n• Secá suavemente con un paño de microfibra.\n• Evitá la exposición a cloro, piscinas y fragancias directas.\n\n*Beneficio Áurea:* Recordá que disponés de **mantenimiento y pulido anual bonificado de por vida** en nuestro atelier central.`,
+      text: `**ÁUREA Atelier** es una casa argentina de alta joyería y orfebrería de autor ubicada en Av. Alvear 1850, Ciudad Autónoma de Buenos Aires.\n\n• **Nobleza Material:** Forjamos alianzas, solitarios, gargantillas y pulseras exclusivamente en metales nobles genuinos (Oro 18K y Plata 925 de ley) sin baños ni enchapados superficiales.\n• **Sostenibilidad:** Incorporamos diamantes cultivados en laboratorio (lab-grown) carbono neutro certificados VVS, garantizando la misma pureza y dureza 10 Mohs con impacto ambiental positivo.\n• **Atelier:** Contamos con taller propio para ajustes, grabados láser de precisión y mantenimiento perpetuo.`,
+      products: matched,
+      suggestions: ["Ver Colección Destacada", "Dónde estamos ubicados", "Hablar con un orfebre"]
+    };
+  }
+
+  // 5. Ubicación, Atelier Central, Visitas y Horarios
+  if (['donde estan', 'donde queda', 'ubicacion', 'direccion', 'local', 'tienda fisica', 'showroom', 'taller', 'visitar', 'cita', 'horario', 'abren', 'puedo ir', 'calle'].some(k => norm.includes(k))) {
+    return {
+      text: `Nuestro **Atelier Central** se encuentra ubicado en:\n\n• **Dirección:** Av. Alvear 1850, Ciudad Autónoma de Buenos Aires.\n• **Modalidad:** Atención personalizada con cita previa para garantizarte privacidad y asesoramiento mano a mano con un maestro orfebre.\n• **Horarios:** Lunes a Viernes de 10:00 a 19:00 hs | Sábados de 10:00 a 14:00 hs.\n\nSi querés coordinar una cita para probarte alianzas o diseñar una joya a medida, podés pulsar el botón de WhatsApp aquí mismo.`,
       products: [],
-      suggestions: ["¿Cómo solicito el pulido anual?", "Ver joyas en Oro 18K", "Hablar con un orfebre"]
+      suggestions: ["Coordinar cita por WhatsApp", "Ver piezas en catálogo", "Tiempos de envío"]
     };
   }
 
-  // 8. Regalos, ocasiones especiales o aniversarios
-  if (query.includes('regalo') || query.includes('aniversario') || query.includes('novia') || query.includes('compromiso') || query.includes('cumple') || query.includes('recomendar') || query.includes('especial')) {
-    const featuredProds = products.filter(p => p.badge && (p.badge.toLowerCase().includes('exclusivo') || p.badge.toLowerCase().includes('alta joyería') || p.badge.toLowerCase().includes('más vendido')));
+  // 6. Garantía, Autenticidad, Calidad y Mantenimiento
+  if (['garantia', 'certificado', 'autenticidad', 'original', 'calidad', 'reparar', 'reparacion', 'mantenimiento', 'pulido'].some(k => norm.includes(k))) {
     return {
-      text: `Para agasajar en un hito trascendental, te recomiendo nuestras creaciones de silueta atemporal:\n\nNuestros solitarios con diamantes cultivados y gargantillas finas se entregan listas para regalar con presentación de gala y cambio garantizado de talle sin costo.`,
-      products: (featuredProds.length > 0 ? featuredProds : products).slice(0, 3),
-      suggestions: ["Anillos de compromiso", "¿Cómo viene el packaging?", "Consultar por WhatsApp"]
+      text: `En **ÁUREA Atelier** respaldamos cada obra con los más altos estándares de orfebrería:\n\n• **Garantía Perpetua:** Avalamos de por vida la nobleza y ley de nuestros metales (Oro 18K y Plata 925).\n• **Certificado de Autenticidad Foliado:** Cada pieza incluye especificación de aleación, gramaje y graduación de gemas.\n• **Primer Ajuste de Talle Bonificado:** Si el anillo no te calza a la perfección, lo ajustamos sin cargo con retiro y entrega asegurada.\n• **Mantenimiento Anual Gratuito:** Disponés de pulido y revisión de engastes sin costo anual de por vida en nuestro atelier.`,
+      products: matched,
+      suggestions: ["¿Cómo mido mi talle?", "Joyas en Oro 18K", "Consultar por WhatsApp"]
     };
   }
 
-  // 9. Búsqueda por categorías específicas (aros, collares, pulseras, etc.)
-  if (query.includes('aro') || query.includes('collar') || query.includes('pulsera') || query.includes('gargantilla') || query.includes('solitario')) {
-    let catKey = 'todos';
-    if (query.includes('aro')) catKey = 'aros';
-    else if (query.includes('collar') || query.includes('gargantilla')) catKey = 'collares';
-    else if (query.includes('pulsera')) catKey = 'pulseras';
-
-    const matched = products.filter(p => p.category === catKey || p.name.toLowerCase().includes(query));
-    if (matched.length > 0) {
-      return {
-        text: `Aquí tenés algunas de nuestras creaciones más destacadas de esa colección. Podés pulsar en **"Ver"** para inspeccionar detalles o en **"+ Bolsa"** para adquirirla directamente:`,
-        products: matched.slice(0, 3),
-        suggestions: ["Ver todas las piezas", "Calcular cuotas sin interés", "¿Tienen envío gratis?"]
-      };
-    }
+  // 7. Cambios, Devoluciones y Satisfacción
+  if (['cambio', 'cambios', 'devolucion', 'devoluciones', 'si no me gusta', 'si no le queda', 'si me equivoque', 'politica de cambio'].some(k => norm.includes(k))) {
+    return {
+      text: `Comprar en ÁUREA es 100% libre de riesgos:\n\n• **Plazo de Cambio:** Disponés de **30 días corridos** desde la recepción de tu joya para solicitar un cambio de modelo o medida.\n• **Primer Ajuste Bonificado:** Si elegiste un anillo y el talle necesita modificación, el primer ajuste es **100% gratuito** con retiro y entrega asegurada a domicilio.\n• **Procedimiento Simple:** Nos contactás por WhatsApp o mail y Andreani retira el paquete asegurado por tu domicilio sin complicaciones.`,
+      products: matched,
+      suggestions: ["¿Cómo mido mi talle?", "Iniciar una compra", "Hablar con soporte"]
+    };
   }
 
-  // 10. Respuesta por defecto
+  // 8. Cómo comprar / Proceso de pedido
+  if (['como compro', 'como es el proceso', 'pasos para comprar', 'como pago', 'hacer pedido', 'agregar al carrito', 'como hacer la compra', 'como encargar'].some(k => norm.includes(k))) {
+    return {
+      text: `Comprar en ÁUREA es ágil, seguro y transparente:\n\n1. **Elegí tu joya:** Podés verla en detalle con 'Ver' o agregarla directamente a tu compra con **'+ Bolsa'** aquí en el chat.\n2. **Seleccioná tu talle:** En tu bolsa hacé clic en 'Iniciar Pago Seguro'.\n3. **Elegí tu beneficio de pago:** Hasta **6 cuotas fijas sin interés** con tarjetas vía Mercado Pago o **15% OFF directo** por Transferencia Bancaria.\n4. **Envío asegurado:** Lo despachamos gratis a tu domicilio con Andreani y te enviamos el código de seguimiento satelital.`,
+      products: matched,
+      suggestions: ["Ver Catálogo Completo", "Medios de pago y cuotas", "Hablar con un orfebre"]
+    };
+  }
+
+  // 9. Contacto humano y WhatsApp
+  if (['contacto', 'telefono', 'mail', 'whatsapp', 'humano', 'persona', 'asesor real', 'hablar con alguien', 'numero'].some(k => norm.includes(k))) {
+    return {
+      text: `Podés ponerte en contacto directo con nuestro equipo de orfebres y asesores a través de:\n\n• **WhatsApp Directo:** [+54 9 11 4050-9988](https://wa.me/5491140509988) (Atención personalizada de lunes a sábados).\n• **Correo Institucional:** atelier@aurea-joyeria.com\n• **Atelier:** Av. Alvear 1850, Ciudad Autónoma de Buenos Aires.\n\nHaciendo clic en el botón de WhatsApp superior podés iniciar una conversación de inmediato con una asesora humana.`,
+      products: [],
+      suggestions: ["Abrir WhatsApp Oficial", "Ver catálogo de joyas", "Seguir chateando aquí"]
+    };
+  }
+
+  // 10. Diseños personalizados y grabados
+  if (['personalizado', 'personalizados', 'a medida', 'grabar', 'grabado', 'inscripcion', 'disenar', 'a pedido'].some(k => norm.includes(k))) {
+    return {
+      text: `Realizamos **piezas exclusivas y alianzas a medida** en nuestro taller:\n\n• **Grabado Láser de Alta Precisión:** Bonificado sin costo en todas nuestras alianzas y solitarios (nombres, fechas, iniciales o coordenadas).\n• **Orfebrería a Pedido:** Forjamos alianzas en Oro 18K (amarillo o blanco) con acabados pulido espejo, satinado mate o texturado florentino.\n• **Engastes a Medida:** Asesoramiento para montar diamantes o gemas heredadas con monturas contemporáneas.`,
+      products: matchProductsJS('alianzas', products),
+      suggestions: ["Cotizar por WhatsApp", "Ver alianzas en catálogo", "¿Cómo medir el talle?"]
+    };
+  }
+
+  // 11. Consulta explícita sobre cómo medir el talle de anillo
+  if (['talle', 'talla', 'como se mi talle', 'como mido', 'medir', 'medida', 'diametro', 'milimetro', 'tabla de talles', 'numero de anillo', 'medir mi dedo', 'tamano de anillo'].some(k => norm.includes(k))) {
+    return {
+      text: `Para conocer tu talle exacto en Argentina, el método más preciso es medir con regla milimetrada el **diámetro interno** de un anillo que te quede cómodo (sin incluir el borde metálico):\n\n• **16.5 mm** = Talle 12 / 13\n• **17.2 mm** = Talle 14 / 15 *(estándar femenino más frecuente)*\n• **18.0 mm** = Talle 17 / 18\n• **19.0 mm** = Talle 20 / 21\n\n**Tranquilidad Áurea:** Todas nuestras piezas cuentan con el **primer ajuste de talle 100% bonificado sin cargo**, incluyendo retiro y entrega asegurada en tu domicilio.`,
+      products: matchProductsJS('anillos', products),
+      suggestions: ["Ver anillos en stock", "¿Y si es para regalo sorpresa?", "Consultar por WhatsApp"]
+    };
+  }
+
+  // 12. Compromiso, Casamiento, Alianzas y Pedidas
+  if (['compromiso', 'casamiento', 'boda', 'alianza', 'alianzas', 'pedida', 'proponer', 'matrimonio'].some(k => norm.includes(k))) {
+    return {
+      text: `Para una propuesta de compromiso o unión matrimonial inolvidable, nuestras obras de alta orfebrería destacan por su solidez eterna:\n\n• **Solitarios de Compromiso:** En Oro 18K macizo con diamantes cultivados lab-grown certificados VVS de brillo excepcional.\n• **Alianzas Matrimoniales:** Diseñadas con perfil *comfort-fit* anatómico para uso diario continuo.\n• **Beneficios Especiales:** Incluyen grabado láser personalizado sin cargo y cambio de talle garantizado.`,
+      products: matchProductsJS('compromiso', products),
+      suggestions: ["Ver Solitarios de Compromiso", "¿Cómo saber su talle en secreto?", "Hablar con un orfebre"]
+    };
+  }
+
+  // 13. Diamantes cultivados vs Circones / Zirconia / Sintéticos
+  if (['circon', 'zirconia', 'cubic', 'sintetico', 'moissanita', 'falso', 'trucho', 'es real'].some(k => norm.includes(k))) {
+    return {
+      text: `Existe una diferencia radical entre un circón y un diamante cultivado:\n\n• **Circón o Zirconia:** Es una gema sintética blanda de laboratorio (óxido de circonio) que se desgasta, raya y pierde su brillo o se vuelve lechosa con el roce y el agua en pocos meses.\n• **Diamante Cultivado Áurea:** Es un **diamante auténtico** en su física, química y óptica (100% carbono puro cristalizado con dureza 10 Mohs). Brilla eternamente, no se raya y viene con certificación gemológica oficial.`,
+      products: matchProductsJS('diamantes', products),
+      suggestions: ["Ver joyas con Diamantes", "Certificación VVS", "Consultar por WhatsApp"]
+    };
+  }
+
+  // 14. ¿Se pueden mojar? / Ducha / Pileta / Mar
+  if (['mojar', 'se puede mojar', 'agua', 'ducha', 'pileta', 'mar', 'bano', 'se arruina'].some(k => norm.includes(k))) {
+    return {
+      text: `¡Sí! Todas nuestras creaciones de **Oro 18K macizo y Plata 925 de ley** son metales nobles macizos y no enchapados, por lo que **no se pelan ni se despintan con el agua cotidiana ni en la ducha**.\n\n• **Recomendación orfebre:** Para conservar el lustre de pulido espejo como el primer día, aconsejamos retirar las piezas antes de ingresar a piletas con cloro intenso o aplicar fragancias y cremas directamente sobre ellas.\n• **Beneficio perpetuo:** Recordá que tenés **mantenimiento y pulido anual bonificado de por vida** en nuestro atelier.`,
+      products: matched,
+      suggestions: ["Consejos de limpieza", "Joyas en Oro 18K", "Mantenimiento gratuito"]
+    };
+  }
+
+  // 15. Colección de AROS
+  if (['aro', 'aros', 'arito', 'aritos', 'argolla', 'argollas', 'criollo', 'criollos'].some(k => norm.includes(k))) {
+    return {
+      text: `Nuestra colección de **Aros de Autor** combina ligereza escultural y porte refinado:\n\n• Criollos y argollas macizas forjadas a mano en **Oro 18K y Plata 925**.\n• Cierres de seguridad reforzados antialérgicos para máximo confort.\n• Terminaciones pulidas a mano con brillo espejo inalterable.\n\nAquí tenés nuestras piezas más destacadas para ver detalles o agregar a tu bolsa:`,
+      products: matchProductsJS('aros', products),
+      suggestions: ["Aros en Oro 18K", "Aros en Plata 925", "Calcular cuotas sin interés"]
+    };
+  }
+
+  // 16. Colección de COLLARES y GARGANTILLAS
+  if (['collar', 'collares', 'gargantilla', 'gargantillas', 'cadena', 'cadenas', 'dije', 'dijes', 'colgante'].some(k => norm.includes(k))) {
+    return {
+      text: `Nuestras **Gargantillas y Collares** están concebidos para resaltar sobre la piel con delicadeza atemporal:\n\n• Cadenas forjadas en Oro 18K y Plata 925 con largo regulable (40 a 45 cm) que se adapta a cualquier escote.\n• Solitarios colgantes con diamantes cultivados éticos y engastes a cuatro granos de máxima refracción.\n• Broches de seguridad reforzados tipo marinero u oval pulido.`,
+      products: matchProductsJS('collares', products),
+      suggestions: ["Gargantillas con Diamante", "Collares en Oro 18K", "Opciones para regalo"]
+    };
+  }
+
+  // 17. Colección de PULSERAS y RIVIÈRES
+  if (['pulsera', 'pulseras', 'brazalete', 'brazaletes', 'riviere', 'esclava'].some(k => norm.includes(k))) {
+    return {
+      text: `Nuestra línea de **Pulseras y Rivières** encarna el equilibrio entre diseño escultórico y ergonomía diaria:\n\n• **Pulseras Rivière / Tenis:** Engarzadas a mano con diamantes cultivados de brillo continuo y cierre de doble traba de seguridad.\n• **Brazaletes Rígidos & Eslabones:** Forjados en Oro 18K macizo y Plata 925 con acabado satinado o espejo.`,
+      products: matchProductsJS('pulseras', products),
+      suggestions: ["Pulseras Rivière Diamantes", "Medidas de muñeca", "Pulseras en Oro 18K"]
+    };
+  }
+
+  // 18. Colección de ANILLOS (cuando preguntan por anillos en general, no talle)
+  if (['anillo', 'anillos', 'solitario', 'solitarios'].some(k => norm.includes(k))) {
+    return {
+      text: `Nuestra selección de **Anillos y Solitarios** abarca desde siluetas contemporáneas hasta piezas de alta orfebrería:\n\n• Forjados en **Oro 18K Amarillo Macizo**, **Oro Blanco con rodio** y **Plata 925 de ley**.\n• Con gemas éticas, diamantes cultivados VVS o siluetas minimalistas puras.\n• Incluyen **primer ajuste de talle sin cargo** para que compres con total tranquilidad.`,
+      products: matchProductsJS('anillos', products),
+      suggestions: ["¿Cómo mido mi talle?", "Solitarios de Compromiso", "Ver piezas en Oro 18K"]
+    };
+  }
+
+  // 19. Regalos, Aniversarios y Recomendaciones
+  if (['regalo', 'regalos', 'recomendar', 'recomiendame', 'que me recomendas', 'aniversario', 'cumpleanos', 'cumple', 'novia', 'mama', 'esposa', 'especial', 'destacado', 'mas vendido'].some(k => norm.includes(k))) {
+    return {
+      text: `Para agasajar en una ocasión especial o celebrar un hito trascendental, te recomiendo nuestras piezas de silueta universal:\n\n• **Gargantillas con Diamante Solitario:** Una joya atemporal con largo adaptable que no depende de conocer talles de dedo.\n• **Aros Criollos Clásicos:** Perfectos para uso cotidiano o de noche, en Oro 18K o Plata 925.\n• **Presentación de Obsequio:** Todas nuestras joyas se entregan listas para regalar en un estuche rígido forrado en lino, con lazo de satén y cambio garantizado.`,
+      products: matched,
+      suggestions: ["Gargantillas para regalo", "Aros atemporales", "¿Cómo viene el packaging?"]
+    };
+  }
+
+  // 20. Metales Nobles (Oro 18k, Oro Blanco, Plata 925)
+  if (['oro', 'plata', 'metal', 'metales', '18k', '925', 'blanco', 'rosa', 'amarillo', 'despinta', 'enchapado', 'macizo', 'rodio'].some(k => norm.includes(k))) {
+    return {
+      text: `En **ÁUREA Atelier** forjamos nuestras piezas exclusivamente en metales nobles macizos de primera ley:\n\n• **Oro 18K Amarillo Macizo (750‰):** Nobleza perpetua. No se despinta, no pierde su brillo ni se desgasta con los años.\n• **Oro Blanco 18K:** Aleación de alta orfebrería con paladio y terminación de rodio electrolítico para un brillo níveo inalterable.\n• **Plata 925 de Ley:** Plata esterlina maciza forjada y pulida artesanalmente con acabado espejo antialérgico.\n\nPrescindimos de baños superficiales perecederos para que cada joya conviva con tu piel de generación en generación.`,
+      products: matched,
+      suggestions: ["Joyas en Oro 18K", "Joyas en Plata 925", "Garantía perpetua"]
+    };
+  }
+
+  // 21. Diamantes Cultivados y Gemología Ética
+  if (['diamante', 'diamantes', 'lab grown', 'cultivado', 'cultivados', 'laboratorio', 'vvs', 'brillante', 'gema', 'gemas', 'piedra', 'zafiro', 'esmeralda', 'rubi'].some(k => norm.includes(k))) {
+    return {
+      text: `Nuestros diamantes son **cultivados en laboratorio con huella de carbono neutra certificada**:\n\n• **Identidad Absoluta:** Tienen exactamente la misma composición química (100% carbono puro cristalizado en red cúbica), dureza 10 Mohs y brillo óptico que un diamante de mina.\n• **Pureza Superior:** Seleccionamos graduaciones **VVS1 / VVS2** y escala de color **F-G (incoloro excepcional)**.\n• **Sostenibilidad:** Libres de conflicto ético y con trazabilidad verificable certificada.`,
+      products: matchProductsJS('diamantes', products),
+      suggestions: ["Ver Alta Joyería Diamantes", "¿Tienen certificación oficial?", "Cuotas sin interés"]
+    };
+  }
+
+  // 22. Descuentos, Promociones y Ofertas
+  if (['descuento', 'descuentos', 'promocion', 'promociones', 'promo', 'promos', 'oferta', 'ofertas', 'cupon', '15%'].some(k => norm.includes(k))) {
+    return {
+      text: `En **ÁUREA Atelier** disponemos de importantes beneficios comerciales vigentes:\n\n• **15% de Descuento Inmediato** abonando mediante Transferencia Bancaria directa (Alias: \`AUREA.JOYAS.ARG\`).\n• **3 y 6 Cuotas Fijas Sin Interés** con tarjetas de crédito bancarias Visa, Mastercard y American Express por Mercado Pago.\n• **Envío Gratis Asegurado** a todo el país a través de Andreani Custodia Express.`,
+      products: matched,
+      suggestions: ["Datos de Transferencia 15% OFF", "Calcular cuotas", "Ver catálogo de joyas"]
+    };
+  }
+
+  // 23. Stock y Disponibilidad Inmediata
+  if (['stock', 'disponible', 'disponibilidad', 'inmediata', 'entrega inmediata'].some(k => norm.includes(k))) {
+    return {
+      text: `Todas las piezas expuestas en nuestro catálogo online cuentan con **stock asegurado para despacho prioritario**:\n\n• **CABA y Gran Buenos Aires:** Despacho prioritario en 24 a 48 hs hábiles.\n• **Resto del país:** 3 a 5 días hábiles a domicilio o sucursal Andreani con seguimiento satelital.\n• **Piezas a Medida / Ajustes especiales:** La calibración orfebre toma entre 48 y 72 hs hábiles adicionales.`,
+      products: matched,
+      suggestions: ["Ver joyas en stock", "¿Cómo mido mi talle?", "Tiempos de envío Andreani"]
+    };
+  }
+
+  // 24. Precios, Presupuesto y Opciones Accesibles / Exclusivas
+  if (budget || ['precio', 'precios', 'cuanto sale', 'cuanto cuesta', 'costo', 'costos', 'presupuesto', 'barato', 'economico', 'accesible', 'caro', 'exclusivo'].some(k => norm.includes(k))) {
+    const budgetStr = budget ? ` de hasta **${formatARS(budget)}**` : '';
+    return {
+      text: `Para tu consulta de presupuesto${budgetStr}, seleccioné creaciones destacadas forjadas en metales nobles:\n\n• **Piezas en Plata 925 de Ley:** Desde $58.000 a $95.000 (o 3 cuotas fijas sin interés de ~$19.000).\n• **Orfebrería en Oro 18K Macizo:** Desde $190.000 a $380.000.\n• **Alta Joyería en Diamantes Cultivados:** Obras de autor de $390.000 a $780.000.\n\nRecordá que abonando por **Transferencia Bancaria tenés un 15% de descuento inmediato**, o podés financiar en **hasta 6 cuotas sin interés**.`,
+      products: matched,
+      suggestions: ["Opciones más accesibles", "Joyas en Oro 18K", "Calcular cuotas sin interés"]
+    };
+  }
+
+  // 25. Medios de Pago, Cuotas y Transferencia
+  if (['pago', 'pagos', 'cuota', 'cuotas', 'tarjeta', 'tarjetas', 'mercado pago', 'mercadopago', 'transferencia', 'banco', 'alias', 'cbu'].some(k => norm.includes(k))) {
+    return {
+      text: `Contamos con los siguientes beneficios comerciales en toda la Argentina:\n\n• **3 y 6 Cuotas Fijas Sin Interés** con todas las tarjetas de crédito bancarias (Visa, Mastercard, Amex) procesadas por **Mercado Pago**.\n• **15% de Descuento Inmediato** abonando por Transferencia Bancaria directa (Alias: \`AUREA.JOYAS.ARG\`).\n• Facturación formal automática tipo A o B y protección de cobro bancario SSL de 256 bits.`,
+      products: matched,
+      suggestions: ["Datos para Transferencia", "¿Cómo es el envío Andreani?", "Ver catálogo completo"]
+    };
+  }
+
+  // 26. Envíos y Tiempos de Entrega
+  if (['envio', 'envios', 'andreani', 'tiempo', 'demora', 'llega', 'domicilio', 'sucursal', 'interior', 'packaging', 'caja', 'estuche'].some(k => norm.includes(k))) {
+    return {
+      text: `Brindamos **Envío Gratis Asegurado a toda la República Argentina** a través de **Andreani Custodia Express**:\n\n• **CABA y Gran Buenos Aires:** Despacho prioritario en 24 a 48 hs hábiles.\n• **Resto del país:** 3 a 5 días hábiles a domicilio o sucursal Andreani con seguimiento satelital en tiempo real.\n• **Packaging de Gala:** Cada alhaja viaja en un cofre rígido forrado en lino italiano, lazo de satén, estuche de gamuza y certificado oficial.`,
+      products: [],
+      suggestions: ["¿El envío tiene seguro total?", "¿Cómo viene el packaging?", "Ver catálogo de joyas"]
+    };
+  }
+
+  // 27. Catálogo General y Colecciones
+  if (['catalogo', 'coleccion', 'colecciones', 'que tienen', 'productos', 'piezas', 'modelos', 'ver todo'].some(k => norm.includes(k))) {
+    return {
+      text: `En **ÁUREA Atelier** forjamos cuatro grandes colecciones de autor:\n\n• **Anillos & Solitarios:** Diseños en Oro 18K y Plata 925 con diamantes cultivados o siluetas puras.\n• **Gargantillas & Collares:** Cadenas de eslabón fino y solitarios colgantes regulables.\n• **Aros Criollos:** Argollas macizas con cierres antialérgicos reforzados.\n• **Pulseras & Rivières:** Brazaletes rígidos y líneas rivière con engaste continuo.\n\nAquí tenés algunas de nuestras piezas más aclamadas para inspeccionar o sumar a tu bolsa:`,
+      products: matched,
+      suggestions: ["Ver Anillos y Solitarios", "Ver Aros Criollos", "Gargantillas y Collares"]
+    };
+  }
+
+  // 28. Respuesta conversacional amplia y acogedora (evita insistencias rígidas)
   return {
-    text: `Como asesora de **ÁUREA Atelier**, puedo orientarte sobre:\n\n• **Talles y medidas** exactas para anillos en milímetros.\n• Diferencias entre **Oro 18K Macizo, Oro Blanco y Plata 925**.\n• Diamantes cultivados éticos y gemas de autor.\n• Financiación en **hasta 6 cuotas fijas sin interés** y 15% OFF por transferencia.\n• Envíos gratis asegurados a todo el país.\n\n*¿Sobre qué pieza o detalle te gustaría profundizar?*`,
-    products: products.slice(0, 2),
-    suggestions: ["¿Cómo mido mi talle de anillo?", "Ver joyas en Oro 18K", "Beneficios de pago"]
+    text: `Con mucho gusto te asesoro. En **ÁUREA Atelier** nos especializamos en alta orfebrería de autor forjada en Buenos Aires:\n\n• **Anillos, Solitarios y Alianzas** en Oro 18K macizo y Plata 925 de ley.\n• **Gargantillas, Aros criollos y Pulseras** con diamantes cultivados éticos.\n• **Medición y primer ajuste de talle 100% bonificado** en todo el país.\n• **Hasta 6 cuotas fijas sin interés** con tarjetas y 15% OFF por transferencia bancaria.\n\nPodés elegir alguna de las sugerencias rápidas debajo o consultarme sobre cualquier pieza, metal o detalle de compra.`,
+    products: matched,
+    suggestions: ["Ver Anillos y Solitarios", "¿Cómo mido mi talle?", "Joyas en Oro 18K"]
   };
 }
 

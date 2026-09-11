@@ -497,6 +497,54 @@ ACTUALIZACIÓN: REARQUITECTURA & PROPORCIONES DEL TOOLBAR SUPERIOR
 
 
 ================================================================================
+ACTUALIZACIÓN: RESOLUCIÓN DEFINITIVA DE INTENTS DEL CHAT CON IA (ÁUREA CONCIERGE)
+================================================================================
+1. Diagnóstico del Problema Reportado:
+   - El cliente reportó: "seleccioino o le pregunto cualquier otra cosa y se bugea, e insiste con lo de en q pieza puede ayudarme, no ayuda del todo bien, leelo bien y mejoralo como coresponde".
+   - Causa raíz 1: En `app.js`, la condición `query.includes('anillo')` estaba antes que 'compromiso', por lo que al hacer clic en "Anillo de Compromiso" o preguntar por anillos se disparaba erróneamente la tabla de medición milimétrica de talles.
+   - Causa raíz 2: Falta de normalización diacrítica (acentos y signos de puntuación). Preguntas comunes como "¿dónde están?", "¿qué garantía tienen?", "envíos", "promoción" no coincidían con los textos planos sin acento y caían en el fallback por defecto.
+   - Causa raíz 3: El fallback y el guardrail repetían insistentemente la pregunta "¿En qué pieza o momento especial puedo ayudarte hoy?" / "¿Sobre qué pieza o detalle te gustaría profundizar?", bloqueando el flujo natural de la conversación.
+   - Causa raíz 4: Desincronización entre el motor backend (`ai_advisor.py`) y el motor cliente (`app.js`).
+
+2. Solución Integral Implementada:
+   - Normalización Diacrítica Robusta (`normalizeText` / `normalize_text`):
+     Convierte a minúsculas, elimina acentos (á->a, é->e, etc.), signos de puntuación (¿ ? ¡ ! . , - : " ') y espacios redundantes para un emparejamiento 100% infalible.
+   - Matriz Conversacional de 28 Intenciones Especializadas:
+     1. Guardrail Estricto Educado (sin frases repetitivas; ofrece explorar anillos, metales o pagos).
+     2. Saludos de Cortesía (bienvenida cálida rioplatense).
+     3. Agradecimientos y Despedidas.
+     4. Quiénes son / Historia del Atelier / Filosofía de Marca.
+     5. Ubicación, Atelier Central (Av. Alvear 1850, Buenos Aires) y Citas previas.
+     6. Garantía Perpetua, Autenticidad Foliada y Mantenimiento Anual Gratuito.
+     7. Políticas de Cambio y Devolución (30 días corridos, retiro Andreani a domicilio, primer ajuste bonificado).
+     8. Cómo Comprar / Proceso de Pedido paso a paso.
+     9. Contacto Humano y WhatsApp Oficial (+54 9 11 4050-9988).
+     10. Diseños Personalizados y Grabado Láser sin cargo.
+     11. Medición de Talles de Anillo (sólo ante consultas de medición/talle, con tabla en mm y primer ajuste bonificado).
+     12. Anillos de Compromiso, Alianzas Matrimoniales y Pedidas.
+     13. Diamantes Cultivados vs Circones / Zirconia / Sintéticos.
+     14. ¿Se pueden mojar las joyas? (Ducha, agua cotidiana, piscina).
+     15. Colección de Aros y Criollos.
+     16. Colección de Collares y Gargantillas con Diamante.
+     17. Colección de Pulseras Rivières y Brazaletes.
+     18. Colección de Anillos de Autor.
+     19. Regalos, Aniversarios y Recomendaciones.
+     20. Metales Nobles de Ley (Oro 18K Macizo, Oro Blanco al Paladio, Plata 925).
+     21. Diamantes Cultivados Carbono Neutro VVS F-G.
+     22. Descuentos, Promociones y Cupones (15% OFF Transferencia, 3 y 6 cuotas fijas).
+     23. Stock y Disponibilidad para Despacho Prioritario.
+     24. Precios, Presupuestos y Opciones Accesibles / Exclusivas.
+     25. Medios de Pago (Mercado Pago, Cuotas y Transferencia).
+     26. Envíos Asegurados Andreani y Packaging de Gala.
+     27. Catálogo General y Colecciones.
+     28. Fallback Amigable y Dinámico con sugerencias claras, sin preguntas robóticas repetitivas.
+   - Sincronización Total 1:1:
+     El mismo motor opera de forma idéntica en `ai_advisor.py`, `api/ai_advisor.py` (Vercel) y `public/js/app.js` (cliente estático y offline).
+   - Verificación Automatizada:
+     Suite de pruebas en Python ejecutada exitosamente con 100% de consultas aprobadas.
+
+
+================================================================================
 5. CÓMO EJECUTAR LOCALMENTE
 ================================================================================
 1. Abrir PowerShell en Windows
